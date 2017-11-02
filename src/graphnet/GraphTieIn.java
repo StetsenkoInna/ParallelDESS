@@ -5,7 +5,7 @@
 package graphnet;
 
 import PetriObj.ArcIn;
-import graphpresentation.GraphArc;
+import graphpresentation.GraphTie;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
@@ -17,22 +17,22 @@ import java.util.List;
  *
  * @author Инна
  */
-public class GraphArcIn extends GraphArc implements Serializable {
+public class GraphTieIn extends GraphTie implements Serializable {
 
-    private static ArrayList<GraphArcIn> graphArcInList = new ArrayList<GraphArcIn>(); // added by Olha 24.09.12, cjrrect by Inna 28.11.2012
+    private static ArrayList<GraphTieIn> graphTieInList = new ArrayList<GraphTieIn>(); // added by Olha 24.09.12, cjrrect by Inna 28.11.2012
     private ArcIn tie;
   
-    public GraphArcIn() { // додано Олею 28.09.12 для створення тимчасової дуги (тільки для промальовки)  
+    public GraphTieIn() { // додано Олею 28.09.12 для створення тимчасової дуги (тільки для промальовки)  
       super();
         tie = new ArcIn();
-        //System.out.println("GraphArcIn  "+ tie.getNameP()+"  "+tie.getNumP()+"  "+tie.getNameT()+"  "+tie.getNumT());
+        //System.out.println("GraphTieIn  "+ tie.getNameP()+"  "+tie.getNumP()+"  "+tie.getNameT()+"  "+tie.getNumT());
    }
         
-    public GraphArcIn(ArcIn tiein){
+    public GraphTieIn(ArcIn tiein){
         tie = tiein;
    
     }
-    public ArcIn getArcIn()
+    public ArcIn getTieIn()
     {
     return tie;
     }
@@ -54,16 +54,17 @@ public class GraphArcIn extends GraphArc implements Serializable {
 
     @Override
     public void addElementToArrayList() {  // added by Olha 24.09.12
-        if (graphArcInList == null) {
-            graphArcInList = new ArrayList();
+        if (graphTieInList == null) {
+            graphTieInList = new ArrayList();
         }
-        graphArcInList.add(this);
+        graphTieInList.add(this);
     }
 
     @Override
     public void drawGraphElement(Graphics2D g) {
+        //   System.out.println("Drawing TieIn");
         Graphics2D g2 = (Graphics2D) g;
-        if (tie.getIsInf()) {
+        if (tie.getIsInf() ) {
             Stroke drawingStroke = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{4, 4}, 0);
             g2.setStroke(drawingStroke);
             g2.draw(this.getGraphElement());
@@ -73,30 +74,28 @@ public class GraphArcIn extends GraphArc implements Serializable {
             g2.draw(this.getGraphElement());
             drawArrowHead(g2);
         }
-        if (tie.getQuantity() != 1 || tie.kIsParam()) {
-            String quantityString = tie.kIsParam() // added by Katya 08.12.2016
-                ? tie.getKParamName()
-                : Integer.toString(tie.getQuantity());
+        if (tie.getQuantity()!= 1) {
             this.getAvgLine().setLocation((this.getGraphElement().getX1() + this.getGraphElement().getX2()) / 2, (this.getGraphElement().getY1() + this.getGraphElement().getY2()) / 2);
             g2.drawLine((int) this.getAvgLine().getX() + 5, (int) this.getAvgLine().getY() - 5, (int) this.getAvgLine().getX() - 5, (int) this.getAvgLine().getY() + 5);
-            g2.drawString(quantityString, (float) this.getAvgLine().getX(), (float) this.getAvgLine().getY() - 7);
+            g2.drawString(Integer.toString(tie.getQuantity()), (float) this.getAvgLine().getX(), (float) this.getAvgLine().getY() - 7);
         }
     }
+
     
-    public static ArrayList<GraphArcIn> getGraphArcInList() {
-        return graphArcInList;
+    public static ArrayList<GraphTieIn> getGraphTieInList() {
+        return graphTieInList;
     }
-    public static ArrayList<ArcIn> getArcInList() {  // added by Inna 1.11.2012
+    public static ArrayList<ArcIn> getTieInList() {  // added by Inna 1.11.2012
         
-        ArrayList<ArcIn> arrayArcIn = new ArrayList <>();
-        for (GraphArcIn e: graphArcInList)
-            arrayArcIn.add(e.getArcIn());
-        return arrayArcIn;
+        ArrayList<ArcIn> arrayTieIn = new ArrayList <ArcIn>();
+        for (GraphTieIn e: graphTieInList)
+            arrayTieIn.add(e.getTieIn());
+        return arrayTieIn;
     }
     
 
-    public static void setNullArcInList() {
-        graphArcInList.clear();
+    public static void setNullTieInList() {
+        graphTieInList.clear();
     }
   
     @Override
@@ -115,9 +114,9 @@ public class GraphArcIn extends GraphArc implements Serializable {
    public void setInf(boolean i){
             tie.setInf(i);
         } 
-    public static void addGraphArcInList(List<GraphArcIn> tieIn){ // added by Olha 14/11/2012
-        for (GraphArcIn ti:tieIn){
-            graphArcInList.add(ti);
+    public static void addGraphTieInList(List<GraphTieIn> tieIn){ // added by Olha 14/11/2012
+        for (GraphTieIn ti:tieIn){
+            graphTieInList.add(ti);
         }
     }
     

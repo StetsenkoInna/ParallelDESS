@@ -38,10 +38,10 @@ public class GraphReUseFrame extends javax.swing.JFrame {
         placeTableModel.setGraphPetriPlaceList(graphPetriNet.getGraphPetriPlaceList());
         transitionTableModel = new PetriTransitionTableModel();
         transitionTableModel.setGraphPetriTransitionList(graphPetriNet.getGraphPetriTransitionList());
-        arcInTableModel = new PetriArcInTableModel();
-        arcInTableModel.setGraphPetriArcInList(graphPetriNet.getGraphArcInList());
-        arcOutTableModel = new PetriArcOutTableModel();
-        arcOutTableModel.setGraphPetriArcOutList(graphPetriNet.getGraphArcOutList());
+        tieInTableModel = new PetriTieInTableModel();
+        tieInTableModel.setGraphPetriTieInList(graphPetriNet.getGraphTieInList());
+        tieOutTableModel = new PetriTieOutTableModel();
+        tieOutTableModel.setGraphPetriTieOutList(graphPetriNet.getGraphTieOutList());
 
         petriPlaceTable = new JTable(placeTableModel);
         petriPlaceTable.setRowHeight(ROW_HEIGHT);
@@ -49,12 +49,12 @@ public class GraphReUseFrame extends javax.swing.JFrame {
         petriTransitionTable = new JTable(transitionTableModel);
         petriTransitionTable.setRowHeight(ROW_HEIGHT);
         petriTransitionScrollPane.setViewportView(petriTransitionTable);
-        arcInTable = new JTable(arcInTableModel);
-        arcInTable.setRowHeight(ROW_HEIGHT);
-        arcInScrollPane.setViewportView(arcInTable);
-        arcOutTable = new JTable(arcOutTableModel);
-        arcOutTable.setRowHeight(ROW_HEIGHT);
-        arcOutScrollPane.setViewportView(arcOutTable);
+        tieInTable = new JTable(tieInTableModel);
+        tieInTable.setRowHeight(ROW_HEIGHT);
+        tieInScrollPane.setViewportView(tieInTable);
+        tieOutTable = new JTable(tieOutTableModel);
+        tieOutTable.setRowHeight(ROW_HEIGHT);
+        tieOutScrollPane.setViewportView(tieOutTable);
 
         TableColumn distributionColumn = petriTransitionTable.getColumnModel().getColumn(transitionTableModel.getDistributionColumnIndex());
         JComboBox distributionComboBox = new JComboBox();
@@ -82,8 +82,8 @@ public class GraphReUseFrame extends javax.swing.JFrame {
         cancelButton = new javax.swing.JButton();
         petriPlaceScrollPane = new javax.swing.JScrollPane();
         petriTransitionScrollPane = new javax.swing.JScrollPane();
-        arcInScrollPane = new javax.swing.JScrollPane();
-        arcOutScrollPane = new javax.swing.JScrollPane();
+        tieInScrollPane = new javax.swing.JScrollPane();
+        tieOutScrollPane = new javax.swing.JScrollPane();
         saveButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -116,10 +116,10 @@ public class GraphReUseFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(arcOutScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
-                    .addComponent(arcInScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
-                    .addComponent(petriTransitionScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
-                    .addComponent(petriPlaceScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE))
+                    .addComponent(tieOutScrollPane, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tieInScrollPane, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(petriTransitionScrollPane, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(petriPlaceScrollPane))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(81, 81, 81)
@@ -138,9 +138,9 @@ public class GraphReUseFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(petriTransitionScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(arcInScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tieInScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(arcOutScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tieOutScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(saveAsButton)
@@ -158,8 +158,8 @@ public class GraphReUseFrame extends javax.swing.JFrame {
             fileUse = new FileUse();
             graphPetriNet.setGraphPetriPlaceList(placeTableModel.createGraphPetriPlaceList());
             graphPetriNet.setGraphPetriTransitionList(transitionTableModel.createGraphPetriTransitionList());
-            graphPetriNet.setGraphArcInList(arcInTableModel.createGraphPetriArcInList());
-            graphPetriNet.setGraphArcOutList(arcOutTableModel.createGraphPetriArcOutList());
+            graphPetriNet.setGraphTieInList(tieInTableModel.createGraphPetriTieInList());
+            graphPetriNet.setGraphTieOutList(tieOutTableModel.createGraphPetriTieOutList());
             fileUse.saveGraphNetAs(graphPetriNet, this);
         } catch (ExceptionInvalidNetStructure ex) {
             Logger.getLogger(GraphReUseFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -172,8 +172,8 @@ public class GraphReUseFrame extends javax.swing.JFrame {
             fileUse = new FileUse();
             graphPetriNet.setGraphPetriPlaceList(placeTableModel.createGraphPetriPlaceList());
             graphPetriNet.setGraphPetriTransitionList(transitionTableModel.createGraphPetriTransitionList());
-            graphPetriNet.setGraphArcInList(arcInTableModel.createGraphPetriArcInList());
-            graphPetriNet.setGraphArcOutList(arcOutTableModel.createGraphPetriArcOutList());
+            graphPetriNet.setGraphTieInList(tieInTableModel.createGraphPetriTieInList());
+            graphPetriNet.setGraphTieOutList(tieOutTableModel.createGraphPetriTieOutList());
             fileUse.saveGraphNet(graphPetriNet, graphPetriNet.getPetriNet().getName());
         } catch (ExceptionInvalidNetStructure ex) {
             Logger.getLogger(GraphReUseFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -185,7 +185,7 @@ public class GraphReUseFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void stopEditing(){
-          JTable[] tables={petriPlaceTable, petriTransitionTable, arcInTable, arcOutTable};
+          JTable[] tables={petriPlaceTable, petriTransitionTable, tieInTable, tieOutTable};
         for (JTable t:tables){
             if (t.isEditing()){
                 t.getCellEditor().stopCellEditing();
@@ -193,23 +193,23 @@ public class GraphReUseFrame extends javax.swing.JFrame {
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane arcInScrollPane;
-    private javax.swing.JScrollPane arcOutScrollPane;
     private javax.swing.JButton cancelButton;
     private javax.swing.JScrollPane petriPlaceScrollPane;
     private javax.swing.JScrollPane petriTransitionScrollPane;
     private javax.swing.JButton saveAsButton;
     private javax.swing.JButton saveButton;
+    private javax.swing.JScrollPane tieInScrollPane;
+    private javax.swing.JScrollPane tieOutScrollPane;
     // End of variables declaration//GEN-END:variables
     private GraphPetriNet graphPetriNet;
     private JTable petriPlaceTable;
     private JTable petriTransitionTable;
-    private JTable arcInTable;
-    private JTable arcOutTable;
+    private JTable tieInTable;
+    private JTable tieOutTable;
     private PetriPlaceTableModel placeTableModel;
     private PetriTransitionTableModel transitionTableModel;
-    private PetriArcInTableModel arcInTableModel;
-    private PetriArcOutTableModel arcOutTableModel;
+    private PetriTieInTableModel tieInTableModel;
+    private PetriTieOutTableModel tieOutTableModel;
     private FileUse fileUse;
     private String graphNetName;
     private final int ROW_HEIGHT=22; 

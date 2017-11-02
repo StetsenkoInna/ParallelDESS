@@ -29,8 +29,8 @@ import javax.swing.JTextField;
 import graphnet.GraphPetriNet;
 import graphnet.GraphPetriPlace;
 import graphnet.GraphPetriTransition;
-import graphnet.GraphArcIn;
-import graphnet.GraphArcOut;
+import graphnet.GraphTieIn;
+import graphnet.GraphTieOut;
 
 /**
  * Creates new form PetriNetsPanel
@@ -45,26 +45,25 @@ public class PetriNetsPanel extends javax.swing.JPanel {
     private static int id; // нумерація графічних елементів
     private GraphPetriNet graphNet;  //added 4.12.2012
     private List<GraphPetriNet> graphNetList = new ArrayList();  // для відображення кількох мереж  09.01.13
-    private boolean isSettingArc;
+    private boolean isSettingTie;
     private GraphElement current;
     private GraphElement choosen;
-    private GraphArc currentArc;
-    private GraphArc choosenArc;
+    private GraphTie currentTie;
+    private GraphTie choosenTie;
     private int savedId;
-    public SetArc setArcFrame = new SetArc(this);
+    public SetTie setTieFrame = new SetTie(this);
     public SetPosition setPositionFrame = new SetPosition(this);
     public SetTransition setTransitionFrame = new SetTransition(this);
-   // private Point currentPlacementPoint; // поточна точка на панелі, вибрана користувачем  09.01.13
+    private Point currentPlacementPoint; // поточна точка на панелі, вибрана користувачем  09.01.13
     private JTextField nameTextField;
-  //  private final String COPY_NAME = "_copy";
+    private final String COPY_NAME = "_copy";
     private final String DEFAULT_NAME = "Untitled";
-  //  private AffineTransform at = new AffineTransform();
 
     public PetriNetsPanel(JTextField textField) {
 
         initComponents();
         this.setBackground(Color.WHITE);
-        
+       
         
         nameTextField = textField;
         this.setNullPanel(); // починаємо заново створювати усі списки графічних елементів  //додано 3.12.2012
@@ -82,13 +81,13 @@ public class PetriNetsPanel extends javax.swing.JPanel {
                /* System.out.println("keyPressed:  e "+e.getKeyCode());
                 if(choosen!=null)System.out.println("keyPressed: choosen "+choosen.getName());
                     else  System.out.println("keyPressed:  choosen null");
-                if(choosenArc!=null)System.out.println("keyPressed: choosenArc"+choosenArc.getQuantity());
-                    else  System.out.println("keyPressed:  choosenArc null");*/
+                if(choosenTie!=null)System.out.println("keyPressed: choosenTie"+choosenTie.getQuantity());
+                    else  System.out.println("keyPressed:  choosenTie null");*/
                 if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-                    if (choosenArc != null) {
-                        removeArc(choosenArc);
-                        choosenArc = null;
-                        currentArc = null;
+                    if (choosenTie != null) {
+                        removeTie(choosenTie);
+                        choosenTie = null;
+                        currentTie = null;
                     }
                     if (choosen != null) {
                         try {
@@ -105,19 +104,19 @@ public class PetriNetsPanel extends javax.swing.JPanel {
 
     }
 
-    private void removeArc(GraphArc s) {
+    private void removeTie(GraphTie s) {
         if (s == null) {
             return;
         }
-        if (s == currentArc) {
-            currentArc = null;
+        if (s == currentTie) {
+            currentTie = null;
         }
 
-        if (s.getClass().equals(GraphArcOut.class)) {
-            graphNet.getGraphArcOutList().remove((GraphArcOut) s); //added by Inna 4.12.2012
+        if (s.getClass().equals(GraphTieOut.class)) {
+            graphNet.getGraphTieOutList().remove((GraphTieOut) s); //added by Inna 4.12.2012
 
         } else {
-            graphNet.getGraphArcInList().remove((GraphArcIn) s); //added by Inna 4.12.2012
+            graphNet.getGraphTieInList().remove((GraphTieIn) s); //added by Inna 4.12.2012
         }
 
         repaint();
@@ -125,20 +124,19 @@ public class PetriNetsPanel extends javax.swing.JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
-        
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                            RenderingHints.VALUE_ANTIALIAS_ON);
+                RenderingHints.VALUE_ANTIALIAS_ON);
         this.requestFocusInWindow(); //added 1.06.2013
         //додано 3.12.2012
         if (graphNet == null) {
             graphNet = new GraphPetriNet();
         }
         //тобто на початку роботи встановлюється графічна мережа з порожніми списками графічних елементів та порожньою мережею Петрі!!!
-/*        if (currentPlacementPoint != null) {
+        if (currentPlacementPoint != null) {
             paintCurrentPlacementPoint(g2);
-        }*/
+        }
         graphNet.paintGraphPetriNet(g2, g);
         // промальовуємо всі мережі
         for (GraphPetriNet pnet : graphNetList) {
@@ -146,15 +144,15 @@ public class PetriNetsPanel extends javax.swing.JPanel {
                 pnet.paintGraphPetriNet(g2, g);
             }
         }
-        if (currentArc != null) {
+        if (currentTie != null) {
             g2.setColor(Color.BLUE);
             g.setColor(Color.BLUE);
-            currentArc.drawGraphElement(g2);
+            currentTie.drawGraphElement(g2);
         }
-        if (choosenArc != null) {
+        if (choosenTie != null) {
             g2.setColor(Color.BLUE);
             g.setColor(Color.BLUE);
-            choosenArc.drawGraphElement(g2);
+            choosenTie.drawGraphElement(g2);
         }
         if (current != null) {
             g2.setColor(Color.BLUE);
@@ -164,12 +162,7 @@ public class PetriNetsPanel extends javax.swing.JPanel {
             g2.setColor(Color.BLUE);
             choosen.drawGraphElement(g2);
         }
-        
-        
-        //12.01.16
-       
-     //   this.transform(g2);
-        
+
     }
 
     public GraphElement find(Point2D p) {
@@ -191,9 +184,9 @@ public class PetriNetsPanel extends javax.swing.JPanel {
                     graphNet = pnet;
                     if (pnet.getPetriNet() != null) {
                         String pnetName = graphNet.getPetriNet().getName();
-                      /*  if (pnetName.contains(COPY_NAME)) {
+                        if (pnetName.contains(COPY_NAME)) {
                             pnetName = pnetName.substring(0, pnet.getPetriNet().getName().length() - COPY_NAME.length());
-                        }*/
+                        }
                         nameTextField.setText(pnetName);
                     } else {
                         nameTextField.setText(DEFAULT_NAME);
@@ -207,9 +200,9 @@ public class PetriNetsPanel extends javax.swing.JPanel {
                     graphNet = pnet;
                     if (pnet.getPetriNet() != null) {
                         String pnetName = graphNet.getPetriNet().getName();
-                      /*  if (pnetName.contains(COPY_NAME)) {
+                        if (pnetName.contains(COPY_NAME)) {
                             pnetName = pnetName.substring(0, pnet.getPetriNet().getName().length() - COPY_NAME.length());
-                        }*/
+                        }
                         nameTextField.setText(pnetName);
                     } else {
                         nameTextField.setText(DEFAULT_NAME);
@@ -221,27 +214,27 @@ public class PetriNetsPanel extends javax.swing.JPanel {
         return null;
     }
 
-    public GraphArc findArc(Point2D p) {
-        for (GraphArcOut to : graphNet.getGraphArcOutList()) {
+    public GraphTie findTie(Point2D p) {
+        for (GraphTieOut to : graphNet.getGraphTieOutList()) {
             if (to.isEnoughDistance(p)) {
                 return to;
             }
         }
-        for (GraphArcIn ti : graphNet.getGraphArcInList()) {
+        for (GraphTieIn ti : graphNet.getGraphTieInList()) {
             if (ti.isEnoughDistance(p)) {
                 return ti;
             }
         }
         for (GraphPetriNet pnet : graphNetList) {
-            for (GraphArcOut to : pnet.getGraphArcOutList()) {
+            for (GraphTieOut to : pnet.getGraphTieOutList()) {
                 if (to.isEnoughDistance(p)) {
                    // System.out.println("Current element is from  net = " + pnet.getPetriNet().getName());
                     graphNet = pnet;
                     if (pnet.getPetriNet() != null) {
                         String pnetName = graphNet.getPetriNet().getName();
-                      /*  if (pnetName.contains(COPY_NAME)) {
+                        if (pnetName.contains(COPY_NAME)) {
                             pnetName = pnetName.substring(0, pnet.getPetriNet().getName().length() - COPY_NAME.length());
-                        }*/
+                        }
                         nameTextField.setText(pnetName);
                     } else {
                         nameTextField.setText(DEFAULT_NAME);
@@ -249,15 +242,15 @@ public class PetriNetsPanel extends javax.swing.JPanel {
                     return to;
                 }
             }
-            for (GraphArcIn ti : pnet.getGraphArcInList()) {
+            for (GraphTieIn ti : pnet.getGraphTieInList()) {
                 if (ti.isEnoughDistance(p)) {
                    // System.out.println("Current element is from  net = " + pnet.getPetriNet().getName());
                     graphNet = pnet;
                     if (pnet.getPetriNet() != null) {
                         String pnetName = graphNet.getPetriNet().getName();
-                    /*    if (pnetName.contains(COPY_NAME)) {
+                        if (pnetName.contains(COPY_NAME)) {
                             pnetName = pnetName.substring(0, pnet.getPetriNet().getName().length() - COPY_NAME.length());
-                        }*/
+                        }
                         nameTextField.setText(pnetName);
                     } else {
                         nameTextField.setText(DEFAULT_NAME);
@@ -298,92 +291,90 @@ public class PetriNetsPanel extends javax.swing.JPanel {
                     setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
                     choosen = current;
 
-                    String currentType = current.getType(); // added by Katya 23.10.2016
-                    int currentId = current.getId();
-                    Point2D currentCenter = current.getGraphElementCenter();
-                    
-                    for (GraphArcOut to : graphNet.getGraphArcOutList()) {
-                        if (((GraphPetriTransition)to.getBeginElement()).getId() == currentId && to.getBeginElement().getType().equals(currentType)) {
-                            to.movingBeginElement(currentCenter);
+                    for (GraphTieOut to : graphNet.getGraphTieOutList()) {
+                        if (to.getBeginElement().getId() == current.getId()) {
+                            to.movingBeginElement(current.getGraphElementCenter());
                             to.changeBorder();
+
                         }
-                        if (((GraphPetriPlace)to.getEndElement()).getId() == currentId && to.getEndElement().getType().equals(currentType)) {
-                            to.movingEndElement(currentCenter);
+                        if (to.getEndElement().getId() == current.getId()) {
+                            to.movingEndElement(current.getGraphElementCenter());
                             to.changeBorder();
+
                         }
                     }
-                    for (GraphArcIn ti : graphNet.getGraphArcInList()) {
-                        if (((GraphPetriPlace)ti.getBeginElement()).getId() == currentId && ti.getBeginElement().getType().equals(currentType)) {
-                            ti.movingBeginElement(currentCenter);
+                    for (GraphTieIn ti : graphNet.getGraphTieInList()) {
+                        if (ti.getBeginElement().getId() == current.getId()) {
+                            ti.movingBeginElement(current.getGraphElementCenter());
                             ti.changeBorder();
+
                         }
-                        if (((GraphPetriTransition)ti.getEndElement()).getId() == currentId && ti.getEndElement().getType().equals(currentType)) {
-                            ti.movingEndElement(currentCenter);
+                        if (ti.getEndElement().getId() == current.getId()) {
+                            ti.movingEndElement(current.getGraphElementCenter());
                             ti.changeBorder();
+
                         }
                     }
-                    choosenArc = null;
+                    choosenTie = null;
                 }
-               // currentPlacementPoint = e.getPoint();
+                currentPlacementPoint = e.getPoint();
             }
 
-            if (isSettingArc == true) {
+            if (isSettingTie == true) {
                 current = find(e.getPoint());
                 if (current != null) {
                     if (current.getClass().equals(GraphPetriPlace.class)) {
-                        currentArc = new GraphArcIn();
-                        graphNet.getGraphArcInList().add((GraphArcIn) currentArc); //3.12.2012
-                        currentArc.settingNewArc(current); //set begin element, point and setting LINe(0,0)
+                        currentTie = new GraphTieIn();
+                        graphNet.getGraphTieInList().add((GraphTieIn) currentTie); //3.12.2012
+                        currentTie.settingNewTie(current); //set begin element, point and setting LINe(0,0)
                     } else if (current.getClass().equals(GraphPetriTransition.class)) { //26.01.2013
-                        currentArc = new GraphArcOut();
-                        graphNet.getGraphArcOutList().add((GraphArcOut) currentArc); //3.12.2012
-                        currentArc.settingNewArc(current);
+                        currentTie = new GraphTieOut();
+                        graphNet.getGraphTieOutList().add((GraphTieOut) currentTie); //3.12.2012
+                        currentTie.settingNewTie(current);
                     }
                 } else {    //26.01.2013
-                    isSettingArc = false;
+                    isSettingTie = false;
                 }
-                // System.out.println("after added tie we have such graph net:");
-                // graphNet.print();
+              //  System.out.println("after added tie we have such graph net:");
+               // graphNet.print();
             }
-            isSettingArc = false;//26.01.2013
-            choosenArc = null;
+            isSettingTie = false;//26.01.2013
+            choosenTie = null;
 
             repaint();
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
+
             if (current != null) {
                 current.setNewCoordinates(e.getPoint());
+
             } else {
                 current = find(e.getPoint());
-                
-                if (current != null && e.getClickCount() >= 2) { //change 2->1??
-                    String currentType = current.getType(); // added by Katya 23.10.2016
-                    int currentId = current.getId();
-                    Point2D currentCenter = current.getGraphElementCenter();
-                    
+                if (current != null && e.getClickCount() >= 2) {  //change 2->1??
                     choosen = current;
-                    for (GraphArcIn ti : graphNet.getGraphArcInList()) {
-                        if (((GraphPetriPlace)ti.getBeginElement()).getId() == currentId && ti.getBeginElement().getType().equals(currentType)) {
-                            ti.movingBeginElement(currentCenter);
+                    for (GraphTieIn ti : graphNet.getGraphTieInList()) {
+                        if (ti.getBeginElement().getId() == current.getId()) {
+                            ti.movingBeginElement(current.getGraphElementCenter());
                             ti.changeBorder();
                             break;
                         }
-                        if (((GraphPetriTransition)ti.getEndElement()).getId() == currentId && ti.getEndElement().getType().equals(currentType)) {
-                            ti.movingEndElement(currentCenter);
+                        if (ti.getEndElement().getId() == current.getId()) {
+                            ti.movingEndElement(current.getGraphElementCenter());
                             ti.changeBorder();
                             break;
                         }
+
                     }
-                    for (GraphArcOut to : graphNet.getGraphArcOutList()) {
-                        if (((GraphPetriTransition)to.getBeginElement()).getId() == currentId && to.getBeginElement().getType().equals(currentType)) {
-                            to.movingBeginElement(currentCenter);
+                    for (GraphTieOut to : graphNet.getGraphTieOutList()) {
+                        if (to.getBeginElement().getId() == current.getId()) {
+                            to.movingBeginElement(current.getGraphElementCenter());
                             to.changeBorder();
                             break;
                         }
-                        if (((GraphPetriPlace)to.getEndElement()).getId() == currentId && to.getEndElement().getType().equals(currentType)) {
-                            to.movingEndElement(currentCenter);
+                        if (to.getEndElement().getId() == current.getId()) {
+                            to.movingEndElement(current.getGraphElementCenter());
                             to.changeBorder();
                             break;
                         }
@@ -396,19 +387,22 @@ public class PetriNetsPanel extends javax.swing.JPanel {
                     } else {
                         setTransitionFrame.setVisible(true);
                         setTransitionFrame.setInfo(choosen);
+
                     }
+
                 }
 
-                currentArc = findArc(e.getPoint());
-                if (currentArc != null && e.getClickCount() >= 2) {
-                    choosenArc = currentArc;
-                    setArcFrame.setVisible(true);
-                    setArcFrame.setInfo(choosenArc);
+
+                currentTie = findTie(e.getPoint());
+                if (currentTie != null && e.getClickCount() >= 2) {
+                    choosenTie = currentTie;
+                    setTieFrame.setVisible(true);
+                    setTieFrame.setInfo(choosenTie);
                 }
-                if (currentArc != null) {
-                    choosenArc = currentArc;
+                if (currentTie != null) {
+                    choosenTie = currentTie;
                     choosen = null;
-                    currentArc = null;
+                    currentTie = null;
                 }
             }
             current = null;
@@ -421,60 +415,54 @@ public class PetriNetsPanel extends javax.swing.JPanel {
         public void mouseReleased(MouseEvent e) {
             current = null;
             setCursor(Cursor.getDefaultCursor());
-            if (currentArc != null) {
+            if (currentTie != null) {
                 current = find(e.getPoint());
                 if (current != null) {
-                    if (currentArc.finishSettingNewArc(current)) {
-                        currentArc.setPetriElements();
-                        currentArc.changeBorder();
-                        currentArc.updateCoordinates();
-                        isSettingArc = false;
-                        
-                        int currBeginId, currEndId;
-                        if (currentArc.getClass().equals(GraphArcIn.class)) {
-                            currBeginId = ((GraphPetriPlace)currentArc.getBeginElement()).getId();
-                            currEndId = ((GraphPetriTransition)currentArc.getEndElement()).getId();
-                        } else {
-                            currBeginId = ((GraphPetriTransition)currentArc.getBeginElement()).getId();
-                            currEndId = ((GraphPetriPlace)currentArc.getEndElement()).getId();
-                        }
+                    if (currentTie.finishSettingNewTie(current)) {
+                        currentTie.setPetriElements();
+                        currentTie.changeBorder();
+                        currentTie.updateCoordinates();
+                        isSettingTie = false;
 
-                        for (GraphArcIn ti : graphNet.getGraphArcInList()) {
-                            if (((GraphPetriPlace)ti.getBeginElement()).getId() == currEndId && ((GraphPetriTransition)ti.getEndElement()).getId() == currBeginId) {
-                                currentArc.twoArcs(ti);
-                                currentArc.updateCoordinates();
+                        for (GraphTieIn ti : graphNet.getGraphTieInList()) {
+                            if (ti.getBeginElement().getId() == currentTie.getEndElement().getId() && ti.getEndElement().getId() == currentTie.getBeginElement().getId()) {
+                                currentTie.twoTies(ti);
+                                currentTie.updateCoordinates();
                             }
                         }
-                        for (GraphArcOut to : graphNet.getGraphArcOutList()) {
-                            if (((GraphPetriTransition)to.getBeginElement()).getId() == currEndId && ((GraphPetriPlace)to.getEndElement()).getId() == currBeginId) {
-                                currentArc.twoArcs(to);
-                                currentArc.updateCoordinates();
+                        for (GraphTieOut to : graphNet.getGraphTieOutList()) {
+                            if (to.getBeginElement().getId() == currentTie.getEndElement().getId() && to.getEndElement().getId() == currentTie.getBeginElement().getId()) {
+                                currentTie.twoTies(to);
+                                currentTie.updateCoordinates();
                             }
+
                         }
-                        currentArc = null;
+                        currentTie = null;
                     } else {                        //1.02.2013 цей фрагмент дозволяє відслідковувати намагання 
-                        removeCurrentArc();// з"єднати позицію з позицією чи перехід з переходом
+                        removeCurrentTie();// з"єднати позицію з позицією чи перехід з переходом
                         //та знищувати неправильно намальовану дугу
+
                     }
 
                     current = null;
                 } else {
-                    removeCurrentArc();//1.02.2013;
+                    removeCurrentTie();//1.02.2013;
                 }
             }
-            currentArc = null;
+            currentTie = null;
             repaint();
         }
     }
 
-    private void removeCurrentArc() { //1.02.2013 цей метод дозволяє знищувати намальовану дугу
-        if (currentArc.getClass().equals(GraphArcIn.class)) // 
+    private void removeCurrentTie() { //1.02.2013 цей метод дозволяє знищувати намальовану дугу
+
+        if (currentTie.getClass().equals(GraphTieIn.class)) // 
         {
-            graphNet.getGraphArcInList().remove(currentArc);
-        } else if (currentArc.getClass().equals(GraphArcOut.class)) {
-            graphNet.getGraphArcOutList().remove(currentArc);
+            graphNet.getGraphTieInList().remove(currentTie);
+        } else if (currentTie.getClass().equals(GraphTieOut.class)) {
+            graphNet.getGraphTieOutList().remove(currentTie);
         } else ;
-        currentArc = null;
+        currentTie = null;
         repaint();
     }
 
@@ -482,31 +470,29 @@ public class PetriNetsPanel extends javax.swing.JPanel {
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            if (current != null && currentArc == null) {  //пересування позиції чи переходу
-                // currentPlacementPoint = null;
+            if (current != null && currentTie == null) {  //пересування позиції чи переходу
+                currentPlacementPoint = null;
                 current.setNewCoordinates(e.getPoint());
-                
-                String currentType = current.getType(); // added by Katya 23.10.2016
-                int currentId = current.getId();
-                Point ePoint = e.getPoint();
-                
-                for (GraphArcIn ti : graphNet.getGraphArcInList()) {
-                    if (((GraphPetriPlace)ti.getBeginElement()).getId() == currentId && ti.getBeginElement().getType().equals(currentType)) {
-                        ti.movingBeginElement(ePoint);
+                for (GraphTieIn ti : graphNet.getGraphTieInList()) {
+                    if (ti.getBeginElement().getId() == current.getId()) {
+                        ti.movingBeginElement(e.getPoint());
                         ti.changeBorder();
+
                     }
-                    if (((GraphPetriTransition)ti.getEndElement()).getId() == currentId && ti.getEndElement().getType().equals(currentType)) {
-                        ti.movingEndElement(ePoint);
+                    if (ti.getEndElement().getId() == current.getId()) {
+                        ti.movingEndElement(e.getPoint());
                         ti.changeBorder();
                     }
                 }
-                for (GraphArcOut to : graphNet.getGraphArcOutList()) {
-                    if (((GraphPetriTransition)to.getBeginElement()).getId() == currentId && to.getBeginElement().getType().equals(currentType)) {
-                        to.movingBeginElement(ePoint);
+                for (GraphTieOut to : graphNet.getGraphTieOutList()) {
+                    if (to.getBeginElement().getId() == current.getId()) {
+                        to.movingBeginElement(e.getPoint());
+
                         to.changeBorder();
                     }
-                    if (((GraphPetriPlace)to.getEndElement()).getId() == currentId && to.getEndElement().getType().equals(currentType)) {
-                        to.movingEndElement(ePoint);
+                    if (to.getEndElement().getId() == current.getId()) {
+                        to.movingEndElement(e.getPoint());
+
                         to.changeBorder();
                     }
                 }
@@ -514,17 +500,18 @@ public class PetriNetsPanel extends javax.swing.JPanel {
                 repaint();
             }
             // коли малюємо дугу
-            if (currentArc != null && current != null) {
+            if (currentTie != null && current != null) {
                 // System.out.println("Setting new coordinates for tie");
-                currentArc.setNewCoordinates(e.getPoint());
+                currentTie.setNewCoordinates(e.getPoint());
                 repaint();
             }
         }
 
         @Override
         public void mouseMoved(MouseEvent e) {
-            if (current != null && currentArc == null) {
-               // currentPlacementPoint = null;
+           
+            if (current != null && currentTie == null) {
+                currentPlacementPoint = null;
                 setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
                 current.setNewCoordinates(e.getPoint());
                 repaint();
@@ -544,16 +531,16 @@ public class PetriNetsPanel extends javax.swing.JPanel {
         return choosen;
     }
 
-    public void setCurrentGraphArc(GraphArc t) {
-        currentArc = t;
+    public void setCurrentGraphTie(GraphTie t) {
+        currentTie = t;
     }
 
-    public GraphArc getCurrentGraphArc() {
-        return currentArc;
+    public GraphTie getCurrentGraphTie() {
+        return currentTie;
     }
 
-    public GraphArc getChoosenArc() {
-        return choosenArc;
+    public GraphTie getChoosenTie() {
+        return choosenTie;
     }
 
     public int getSavedId() {
@@ -572,15 +559,15 @@ public class PetriNetsPanel extends javax.swing.JPanel {
         return "P" + id;
     }
 
-    public void setIsSettingArc(boolean b) { //26.01.2013
-        isSettingArc = b;
+    public void setIsSettingTie(boolean b) { //26.01.2013
+        isSettingTie = b;
     }
 
     public final void setNullPanel() {
         current = null;
-        currentArc = null;
+        currentTie = null;
         choosen = null;
-        choosenArc = null;
+        choosenTie = null;
         id = 0;
         PetriP.initNext(); //ось тут і обнуляється, а я шукаю...
         PetriT.initNext(); //навіть коли читаємо з файлу...
@@ -593,7 +580,7 @@ public class PetriNetsPanel extends javax.swing.JPanel {
         repaint();
     }
 
-    public void addGraphNet(GraphPetriNet net) {  //Тепер написаний цей метод... //можливо достатньо скористатись setNet???
+    public void addPetriNet(GraphPetriNet net) {  //Тепер написаний цей метод... //можливо достатньо скористатись setNet???
 
         // graphNet = net; //4.12.2012  createCopy() НЕ працює...
         //02.02.2012
@@ -603,7 +590,7 @@ public class PetriNetsPanel extends javax.swing.JPanel {
         graphNet = net;
 
         int maxIdPetriNet = 0; //
-        for (GraphPetriPlace pp : graphNet.getGraphPetriPlaceList()) {  //відшукуємо найбільший id для позицій
+        for (GraphPetriPlace pp : graphNet.getGraphPetriPlaceList()) {  //відшукуємо найбільшийid для позицій
             if (maxIdPetriNet < pp.getId()) {
                 maxIdPetriNet = pp.getId();
             }
@@ -623,7 +610,9 @@ public class PetriNetsPanel extends javax.swing.JPanel {
     }
 
     public void deletePetriNet() {
+
         graphNet = null;
+
         repaint();
     }
 
@@ -653,12 +642,12 @@ public class PetriNetsPanel extends javax.swing.JPanel {
         return id++;
     }
 
- /*   public Point getCurrentPlacementPoint() { //09.01.13
+    public Point getCurrentPlacementPoint() { //09.01.13
         return currentPlacementPoint;
-    }*/
+    }
 
     //11.01.13
-  /*  private void paintCurrentPlacementPoint(Graphics2D g2) {
+    private void paintCurrentPlacementPoint(Graphics2D g2) {
         Double x1 = currentPlacementPoint.getX();
         Double y1 = currentPlacementPoint.getY() - 5;
         Double y2 = y1 + 10;
@@ -667,22 +656,8 @@ public class PetriNetsPanel extends javax.swing.JPanel {
         Double x2 = x1 + 10;
         y1 = y1 + 5;
         g2.drawLine(x1.intValue(), y1.intValue(), x2.intValue(), y1.intValue());
-    }*/
-    
-    //12.01.16
-  /*  public void transform(Graphics2D g2){
-      //  AffineTransform at = g2.getTransform();
-        AffineTransform toCenterAt = new AffineTransform();
-        toCenterAt.concatenate(at);
-     
-        toCenterAt.scale(0.1, 0.1);
-        g2.transform(toCenterAt);
-        g2.setTransform(at);
-        
-        System.out.println("TRANSFORM PANEL");
-        
-        
-    }*/
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -698,145 +673,4 @@ public class PetriNetsPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
- /*   public void animateIn(PetriT tr) {
-   // System.out.println("animate");
-    for(GraphArcIn t: graphNet.getGraphArcInList()){
-        if (t.getArcIn().getNumT() == tr.getNumber()){
-            System.out.println("arrow yeah");
-            try {
-                    t.setActiveColor(Color.BLUE);
-                    t.setLineWidth(3);
-                    this.repaint();
-                    Thread.sleep(50);
-                    t.setLineWidth(5);
-                    this.repaint();
-                    Thread.sleep(50);
-                    t.setLineWidth(7);
-                    this.repaint();
-                    Thread.sleep(50);
-                    t.setLineWidth(5);
-                    this.repaint();
-                    Thread.sleep(10);
-                    t.setLineWidth(3);
-                    this.repaint();
-                    Thread.sleep(50);
-                    t.setLineWidth(1);
-                    t.setActiveColor(Color.BLACK);
-                    this.repaint();
-                    Thread.sleep(50);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(PetriNetsPanel.class.getName()).log(Level.SEVERE, null, ex);
-                }
-        }
-    }
-}
-public void animate(ArrayList<Integer> inP,PetriT tr) {
-        for(GraphPetriPlace p: graphNet.getGraphPetriPlaceList()){
-            for(Integer inp: inP){
-                if(p.getPetriPlace().getNumber() == inp){
-                    System.out.println("yeah");
-                    try {
-                        graphNet.setActiveColor(Color.BLUE);
-                        p.setActiveFontColor(Color.BLUE);
-                        p.setLineWidth(5);
-                        p.setFont(11);
-                        this.repaint();
-                        Thread.sleep(100);
-                        p.setLineWidth(7);
-                        p.setFont(12);
-                        this.repaint();
-                        Thread.sleep(100);
-                        p.setLineWidth(10);
-                        p.setFont(14);
-                        this.repaint();
-                        Thread.sleep(50);
-                        p.setLineWidth(7);
-                        p.setFont(12);
-                        this.repaint();
-                        Thread.sleep(100);
-                        p.setLineWidth(5);
-                        p.setFont(11);
-                        this.repaint();
-                        Thread.sleep(100);
-                        p.setLineWidth(2);
-                        p.setFont(10);
-                        p.setActiveFontColor(Color.BLACK);
-                        graphNet.setActiveColor(Color.BLUE);
-                        this.repaint();
-                        Thread.sleep(100);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(PetriNetsPanel.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        }
-        for(GraphPetriTransition t: graphNet.getGraphPetriTransitionList()){
-            if(t.getPetriTransition().getNumber() == tr.getNumber()){
-                //System.out.println("yeah");
-                try {
-                        t.setActiveColor(Color.BLUE);
-                        t.setLineWidth(5);
-                        t.setFont(11);
-                        this.repaint();
-                        Thread.sleep(50);
-                        t.setLineWidth(7);
-                        t.setFont(12);
-                        this.repaint();
-                        Thread.sleep(50);
-                        t.setLineWidth(10);
-                        t.setFont(14);
-                        this.repaint();
-                        Thread.sleep(50);
-                        t.setLineWidth(7);
-                        t.setFont(12);
-                        this.repaint();
-                        Thread.sleep(10);
-                        t.setLineWidth(5);
-                        t.setFont(11);
-                        this.repaint();
-                        Thread.sleep(50);
-                        t.setLineWidth(1);
-                        t.setFont(10);
-                        t.setActiveColor(Color.BLACK);
-                        this.repaint();
-                        Thread.sleep(50);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(PetriNetsPanel.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-            }
-        }
-        
-    }
-
-public void animateOut(PetriT eventMin) {
-            for(GraphArcOut t: graphNet.getGraphArcOutList()){
-        if (t.getArcOut().getNumT() == eventMin.getNumber()){
-            System.out.println("arrow yeah");
-            try {
-                    t.setActiveColor(Color.BLUE);
-                    t.setLineWidth(3);
-                    this.repaint();
-                    Thread.sleep(50);
-                    t.setLineWidth(5);
-                    this.repaint();
-                    Thread.sleep(50);
-                    t.setLineWidth(7);
-                    this.repaint();
-                    Thread.sleep(50);
-                    t.setLineWidth(5);
-                    this.repaint();
-                    Thread.sleep(10);
-                    t.setLineWidth(3);
-                    this.repaint();
-                    Thread.sleep(50);
-                    t.setLineWidth(1);
-                    t.setActiveColor(Color.BLACK);
-                    this.repaint();
-                    Thread.sleep(50);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(PetriNetsPanel.class.getName()).log(Level.SEVERE, null, ex);
-                }
-        }
-    }
-}*/
 }

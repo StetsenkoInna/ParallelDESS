@@ -6,16 +6,14 @@ package PetriObj;
  */
 import java.io.Serializable;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
  * This class for creating the transition of Petri net
  *
- * @author Стеценко Інна
+ *  @author Inna V. Stetsenko
  */
-public class PetriT extends PetriMainElement implements Cloneable, Serializable { // inheritance added by Katya 20.11.2016
+public class PetriT implements Cloneable, Serializable {
 
     private static double timeModeling = Double.MAX_VALUE - 1;
 
@@ -44,13 +42,13 @@ public class PetriT extends PetriMainElement implements Cloneable, Serializable 
     private double parametr; //середнє значення часу обслуговування
     private double paramDeviation; //середнє квадратичне відхилення часу обслуговування
     private String distribution;
-    private ArrayList<Double> timeOut = new ArrayList<Double>();
-    private ArrayList<Integer> inP = new ArrayList<Integer>();
-    private ArrayList<Integer> inPwithInf = new ArrayList<Integer>();
-    private ArrayList<Integer> quantIn = new ArrayList<Integer>();
-    private ArrayList<Integer> quantInwithInf = new ArrayList<Integer>();
-    private ArrayList<Integer> outP = new ArrayList<Integer>();
-    private ArrayList<Integer> quantOut = new ArrayList<Integer>();
+    private ArrayList<Double> timeOut = new ArrayList<>();
+    private ArrayList<Integer> inP = new ArrayList<>();
+    private ArrayList<Integer> inPwithInf = new ArrayList<>();
+    private ArrayList<Integer> quantIn = new ArrayList<>();
+    private ArrayList<Integer> quantInwithInf = new ArrayList<>();
+    private ArrayList<Integer> outP = new ArrayList<>();
+    private ArrayList<Integer> quantOut = new ArrayList<>();
 
     private int num;  // номер каналу багатоканального переходу, що відповідає найближчий події
     private int number; // номер переходу за списком
@@ -59,17 +57,8 @@ public class PetriT extends PetriMainElement implements Cloneable, Serializable 
     private int observedMin;
     private static int next = 0; //додано 1.10.2012
     
-    // whether parametr, distribution, priority & probability are parameters; added by Katya 08.12.2016
-    private boolean parametrIsParam = false;
-    private boolean distributionIsParam = false;
-    private boolean priorityIsParam = false;
-    private boolean probabilityIsParam = false;
-    // param names
-    private String parametrParamName = null;
-    private String distributionParamName = null;
-    private String priorityParamName = null;
-    private String probabilityParamName = null;
-    
+  
+
     /**
      *
      * @param n name of transition
@@ -175,82 +164,6 @@ public class PetriT extends PetriMainElement implements Cloneable, Serializable 
         this.minEvent();
     }
 
-    public boolean parametrIsParam() {
-        return parametrIsParam;
-    }
-    
-    public boolean distributionIsParam() {
-        return distributionIsParam;
-    }
-    
-    public boolean priorityIsParam() {
-        return priorityIsParam;
-    }
-    
-    public boolean probabilityIsParam() {
-        return probabilityIsParam;
-    }
-    
-    public String getParametrParamName() {
-        return parametrParamName;
-    }
-    
-    public String getDistributionParamName() {
-        return distributionParamName;
-    }
-    
-    public String getPriorityParamName() {
-        return priorityParamName;
-    }
-    
-    public String getProbabilityParamName() {
-        return probabilityParamName;
-    }
-    
-    public void setParametrParam(String paramName) {
-        if (paramName == null) {
-            parametrIsParam = false;
-            parametrParamName = null;
-        } else {
-            parametrIsParam = true;
-            parametrParamName = paramName;
-            parametr = 0.0;
-        }
-    }
-    
-    public void setDistributionParam(String paramName) {
-        if (paramName == null) {
-            distributionIsParam = false;
-            distributionParamName = null;
-        } else {
-            distributionIsParam = true;
-            distributionParamName = paramName;
-            distribution = null;
-        }
-    }
-    
-    public void setPriorityParam(String paramName) {
-        if (paramName == null) {
-            priorityIsParam = false;
-            priorityParamName = null;
-        } else {
-            priorityIsParam = true;
-            priorityParamName = paramName;
-            priority = 0;
-        }
-    }
-    
-    public void setProbabilityParam(String paramName) {
-        if (paramName == null) {
-            probabilityIsParam = false;
-            probabilityParamName = null;
-        } else {
-            probabilityIsParam = true;
-            probabilityParamName = paramName;
-            probability = 1;
-        }
-    }
-    
     /**
      * Set the counter of transitions to zero.
      */
@@ -347,14 +260,13 @@ public class PetriT extends PetriMainElement implements Cloneable, Serializable 
      */
     public double getTimeServ() {
         double a = timeServ;
-        if (distribution != null) { 
-          try {
-                a = generateTimeServ();  
-            } catch (ExceptionInvalidTimeDelay ex) {
-                Logger.getLogger(PetriT.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        if (distribution != null) //додано 6 серпня
+        {
+            a = generateTimeServ();  // додано 6 серпня
         }
-        
+        if (a < 0) {
+            JOptionPane.showMessageDialog(null, "Negative time delay was generated : time == " + a + ".\n Transition '" + this.name + "'.");
+        }
         return a;
 
     }
@@ -384,7 +296,7 @@ public class PetriT extends PetriMainElement implements Cloneable, Serializable 
      *
      * @return value of service time which has been generated
      */
-    public double generateTimeServ() throws ExceptionInvalidTimeDelay {
+    public double generateTimeServ() {
         if (distribution != null) {
             if (distribution.equalsIgnoreCase("exp")) {
                 timeServ = FunRand.exp(parametr);
@@ -461,26 +373,26 @@ public class PetriT extends PetriMainElement implements Cloneable, Serializable 
     /**
      * This method determines the places which is input for the transition. <br>
      * The class PetriNet use this method for creating net with given arrays of
-     * places, transitions, input arcs and output arcs.
+     * places, transitions, input ties and output ties.
      *
      * @param inPP array of places
-     * @param arcs array of input arcs
+     * @param ties array of input ties
      * @throws PetriObj.ExceptionInvalidNetStructure if Petri net has invalid structure
      */
-    public void createInP(PetriP[] inPP, ArcIn[] arcs) throws ExceptionInvalidNetStructure {
+    public void createInP(PetriP[] inPP, ArcIn[] ties) throws ExceptionInvalidNetStructure {
         inPwithInf.clear();    //додано 28.11.2012  список має бути порожнім!!!
         quantInwithInf.clear(); //додано 28.11.2012
         inP.clear();            //додано 28.11.2012
         quantIn.clear();        //додано 28.11.2012
-        for (ArcIn arc: arcs) {
-            if (arc.getNumT() == this.getNumber()) {
-                if (arc.getIsInf() == true) {
-                    inPwithInf.add(arc.getNumP());
-                    quantInwithInf.add(arc.getQuantity());
+        for (ArcIn tie: ties) {
+            if (tie.getNumT() == this.getNumber()) {
+                if (tie.getIsInf() == true) {
+                    inPwithInf.add(tie.getNumP());
+                    quantInwithInf.add(tie.getQuantity());
                 } else {
-                    //if (arcs[j].getQuantity() > 0) { //вхідна позиція додається у разі позитивної кількості зв'язків, 9.11.2015
-                    inP.add(arc.getNumP());
-                    quantIn.add(arc.getQuantity());
+                    //if (ties[j].getQuantity() > 0) { //вхідна позиція додається у разі позитивної кількості зв'язків, 9.11.2015
+                    inP.add(tie.getNumP());
+                    quantIn.add(tie.getQuantity());
                    // }
                 }
             }
@@ -495,10 +407,10 @@ public class PetriT extends PetriMainElement implements Cloneable, Serializable 
      * This method determines the places which is output for the transition.
      * <br>
      * The class PetriNet use this method for creating net with given arrays of
-     * places, transitions, input arcs and output arcs.
+     * places, transitions, input ties and output ties.
      *
      * @param inPP array of places
-     * @param arcs array of output arcs
+     * @param arcs array of output ties
      * @throws PetriObj.ExceptionInvalidNetStructure if Petri net has invalid structure
      */
     public void createOutP(PetriP[] inPP, ArcOut[] arcs) throws ExceptionInvalidNetStructure {
@@ -601,7 +513,10 @@ public class PetriT extends PetriMainElement implements Cloneable, Serializable 
     public void actOut(PetriP[] pp) {
         if (buffer > 0) {
             for (int j = 0; j < outP.size(); j++) {
-                pp[outP.get(j)].increaseMark(quantOut.get(j));
+                if(!pp[outP.get(j)].isExternal()) //28.07.2016
+                    pp[outP.get(j)].increaseMark(quantOut.get(j));
+                else
+                    ; // other Petri-object will do it
             }
             if (num == 0 && (timeOut.size() == 1)) {
                 timeOut.set(0, Double.MAX_VALUE);
@@ -618,12 +533,13 @@ public class PetriT extends PetriMainElement implements Cloneable, Serializable 
         }
 
     }
+    
 
     /**
      * Determines the transition nearest event among the events of its tokens
      * outputs. and the number of transition channel
      */
-    public final void minEvent() {
+    public void minEvent() {
         minTime = Double.MAX_VALUE;
         if (timeOut.size() > 0) {
             for (int i = 0; i < timeOut.size(); i++) {
@@ -673,7 +589,7 @@ public class PetriT extends PetriMainElement implements Cloneable, Serializable 
      *
      * @return list of transition output places
      */
-    ArrayList<Integer> getOutP() {
+    public ArrayList<Integer> getOutP() {
         return outP;
     }
 
@@ -732,5 +648,7 @@ public class PetriT extends PetriMainElement implements Cloneable, Serializable 
     public void setParamDeviation(double parameter) {
         paramDeviation = parameter;
     }
+    
+    
 
 }

@@ -6,9 +6,9 @@ package graphreuse;
 
 import PetriObj.PetriP;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import graphnet.GraphPetriPlace;
-import utils.Utils;
 
 /**
  *
@@ -20,7 +20,7 @@ public class PetriPlaceTableModel extends AbstractTableModel {
     private int row;
     private int column = PLACE_PARAMETERS + 1;
     private Object[][] mass;
-    private String[] COLUMN_NAMES = {"Place", "Name", "Markers"};
+    private String[] COLUMN_NAMES = {"Позиція", "Ім'я", "Маркери"};
     private ArrayList<GraphPetriPlace> graphPetriPlaceList;   
 
     public PetriPlaceTableModel(){
@@ -35,9 +35,7 @@ public class PetriPlaceTableModel extends AbstractTableModel {
             PetriP pp = list.get(i).getPetriPlace();
             mass[i][0] = pp.getName();
             mass[i][1] = pp.getName();
-            mass[i][2] = pp.markIsParam() // modified by Katya 08.12.2016
-                ? pp.getMarkParamName()
-                : pp.getMark();
+            mass[i][2] = pp.getMark();
         }
     }
 
@@ -71,27 +69,20 @@ public class PetriPlaceTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object value, int row, int col) {
+       // System.out.println("PetriPlaceTableModel: Value has been set");
         this.mass[row][col] = (Object) value;
         fireTableCellUpdated(row, col);
     }
 
     @Override
-    public Class getColumnClass(int c) { // modified by Katya 08.12.2016
-        return String.class;
+    public Class getColumnClass(int c) {
+        return getValueAt(0, c).getClass();
     }
 
-    public ArrayList<GraphPetriPlace> createGraphPetriPlaceList() { // modified by Katya 08.12.2016
+    public ArrayList<GraphPetriPlace> createGraphPetriPlaceList() {
         for (int i = 0; i < graphPetriPlaceList.size(); i++) {
-            PetriP petriPlace = graphPetriPlaceList.get(i).getPetriPlace();
-            petriPlace.setName(getValueAt(i, 1).toString());
-            
-            String markValueStr = getValueAt(i, 2).toString();
-            if (Utils.tryParseInt(markValueStr)) {
-                petriPlace.setMark(Integer.valueOf(markValueStr));
-                petriPlace.setMarkParam(null);
-            } else {
-                petriPlace.setMarkParam(markValueStr);
-            }
+            graphPetriPlaceList.get(i).getPetriPlace().setName(getValueAt(i, 1).toString());
+            graphPetriPlaceList.get(i).getPetriPlace().setMark(Integer.valueOf(getValueAt(i, 2).toString()));
         }
         return graphPetriPlaceList;
     }

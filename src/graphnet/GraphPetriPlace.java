@@ -8,7 +8,6 @@ import PetriObj.PetriP;
 import graphpresentation.GraphPosition;
 import java.awt.Graphics2D;
 import java.io.Serializable;
-import javax.swing.JTextField;
 
 /**
  *
@@ -18,16 +17,14 @@ public class GraphPetriPlace extends GraphPosition implements Serializable {    
  
     private PetriP place;
     private static int simpleInd=0; // added by Inna 18.01.2013
-  
-    
-    
+   
     private int id; //додано Олею
   
     public GraphPetriPlace(PetriP P, int i) //додано Олею
     {
         place = P;
         id=i;
-        
+      
     }
 
     public PetriP getPetriPlace()
@@ -45,15 +42,9 @@ public class GraphPetriPlace extends GraphPosition implements Serializable {    
         super.drawGraphElement(g2);
         int font = 10;
         g2.drawString(place.getName(), (float) this.getGraphElement().getX() + GraphPetriPlace.getDIAMETER() / 2 - (place.getName().length() * font) / 2, (float) this.getGraphElement().getY()- GraphPetriPlace.getDIAMETER() / 2 + GraphPetriPlace.getDIAMETER()/3 );
-        String markString = place.markIsParam() // added by Katya 08.12.2016
-            ? place.getMarkParamName()
-            : Integer.toString(place.getMark());
-        g2.drawString(markString, (float) this.getGraphElement().getX() + GraphPetriPlace.getDIAMETER() / 2 - Integer.toString(place.getMark()).length() * font / 2, (float) this.getGraphElement().getY() + GraphPetriPlace.getDIAMETER() / 2 + font / 2);
-    }
-    
-    @Override
-    public String getType() { // added by Katya 23.10.2016
-        return "GraphPetriPlace";
+      
+        g2.drawString(Integer.toString(place.getMark()), (float) this.getGraphElement().getX() + GraphPetriPlace.getDIAMETER() / 2 - Integer.toString(place.getMark()).length() * font / 2, (float) this.getGraphElement().getY() + GraphPetriPlace.getDIAMETER() / 2 + font / 2);
+
     }
 
     @Override

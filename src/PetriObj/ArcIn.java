@@ -11,7 +11,7 @@ import java.io.Serializable;
  * (and directed from place to transion) numP - number of place numT - number of
  * transition k - arc multiplicity inf - flag of information arc
  *
- * @author Стеценко Інна
+ *  @author Inna V. Stetsenko
  */
 public class ArcIn implements Cloneable, Serializable {
 
@@ -23,13 +23,6 @@ public class ArcIn implements Cloneable, Serializable {
     private String nameT;
     private static int next = 0;
     private int number;
-    
-    // whether k and inf are parameters; added by Katya 08.12.2016
-    private boolean kIsParam = false;
-    private boolean infIsParam = false;
-    // param names
-    private String kParamName = null;
-    private String infParamName = null;
 
     /**
      *
@@ -106,44 +99,6 @@ public class ArcIn implements Cloneable, Serializable {
         next++;
     }
 
-    public boolean kIsParam() {
-        return kIsParam;
-    }
-    
-    public boolean infIsParam() {
-        return infIsParam;
-    }
-    
-    public String getKParamName() {
-        return kParamName;
-    }
-    
-    public String getInfParamName() {
-        return infParamName;
-    }
-    
-    public void setKParam(String paramName) {
-        if (paramName == null) {
-            kIsParam = false;
-            kParamName = null;
-        } else {
-            kIsParam = true;
-            kParamName = paramName;
-            k = 1;
-        }
-    }
-    
-    public void setInfParam(String paramName) {
-        if (paramName == null) {
-            infIsParam = false;
-            infParamName = null;
-        } else {
-            infIsParam = true;
-            infParamName = paramName;
-            inf = false;
-        }
-    }
-    
     /**
      * Set the counter of input arcs to zero.
      */
@@ -259,7 +214,7 @@ public class ArcIn implements Cloneable, Serializable {
     }
 
     public void printParameters() {
-        System.out.println("This arc has direction from  place with number " + numP + " to transition with number " + numT
+        System.out.println("This tie has direction from  place with number " + numP + " to transition with number " + numT
                 + " and has " + k + " value of multiplicity, ");
         if (inf == true) {
             System.out.println(" and is informational.");
@@ -269,14 +224,15 @@ public class ArcIn implements Cloneable, Serializable {
     /**
      *
      * @return TieIn object with parameters which copy current parameters of
-     * this arc
+     * this tie
      * @throws java.lang.CloneNotSupportedException if Petri net has invalid structure
      */
     @Override
     public ArcIn clone() throws CloneNotSupportedException {
         super.clone();
-        ArcIn arc = new ArcIn(numP, numT, k);  // коректніть номерів дуже важлива!!!
-        return arc;
+        ArcIn tie = new ArcIn(numP, numT, k);  // коректніть номерів дуже важлива!!!
+        return tie;
 
     }
+
 }

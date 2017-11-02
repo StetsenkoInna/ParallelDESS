@@ -8,7 +8,6 @@ import PetriObj.PetriT;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 import graphnet.GraphPetriTransition;
-import utils.Utils;
 
 /**
  *
@@ -16,19 +15,17 @@ import utils.Utils;
  */
 public class PetriTransitionTableModel extends AbstractTableModel {
 
-    private final int TRANSITION_PARAMETERS = 7;
+    private final int TRANSITION_PARAMETERS = 5;
     private int row;
     private int column = TRANSITION_PARAMETERS + 1;
     private Object[][] mass;
-    private String[] COLUMN_NAMES = {"Transition", "Name", "Time delay value", "Time delay distribution", "Distribution (parameter name)",
-        "Transition priority", "Priority (parameter name)", "Activation probability"};
+    private String[] COLUMN_NAMES = {"Перехід", "Назва", "Значення часової затримки", "Розподіл часу затримки", "Пріоритет переходу", "Ймовірність спрацьовування"};
     private ArrayList<GraphPetriTransition> graphPetriTransitionList;
     private static String[] DISTRIBUTION_OPTIONS = {"null", "exp", "unif", "norm"};
     private int distributionColumnIndex = 3;
-    private int priorityColumnIndex = 5;
+    private int priorityColumnIndex = 4;
 
     public PetriTransitionTableModel() {
-        
     }
 
     public void setGraphPetriTransitionList(ArrayList<GraphPetriTransition> list) {
@@ -39,21 +36,12 @@ public class PetriTransitionTableModel extends AbstractTableModel {
             PetriT pt = list.get(i).getPetriTransition();
             mass[i][0] = pt.getName();
             mass[i][1] = pt.getName();
-            mass[i][2] = pt.parametrIsParam() // modified by Katya 08.12.2016
-                ? pt.getParametrParamName()
-                : pt.getParametr();
+            mass[i][2] = pt.getParametr();
             mass[i][3] = pt.getDistribution();
-            mass[i][4] = pt.distributionIsParam() // added by Katya 08.12.2016
-                ? pt.getDistributionParamName()
-                : null;
-            mass[i][5] = pt.getPriority();
-            mass[i][6] = pt.priorityIsParam() // added by Katya 08.12.2016
-                ? pt.getPriorityParamName()
-                : null;
-            mass[i][7] = pt.probabilityIsParam() // modified by Katya 08.12.2016
-                ? pt.getProbabilityParamName()
-                : pt.getProbability();
+            mass[i][4] = pt.getPriority();
+            mass[i][5] = pt.getProbability();
         }
+
     }
 
     @Override
@@ -91,58 +79,21 @@ public class PetriTransitionTableModel extends AbstractTableModel {
     }
 
     @Override
-    public Class getColumnClass(int c) { // modified by Katya 08.12.2016
-        return (c == 3 || c == 5)
-            ? getValueAt(0, c).getClass()
-            : String.class;
+    public Class getColumnClass(int c) {
+        return getValueAt(0, c).getClass();
     }
 
-    public ArrayList<GraphPetriTransition> createGraphPetriTransitionList() { // modified by Katya 08.12.2016
+    public ArrayList<GraphPetriTransition> createGraphPetriTransitionList() {
         for (int i = 0; i < graphPetriTransitionList.size(); i++) {
             PetriT pt = graphPetriTransitionList.get(i).getPetriTransition();
             pt.setName(getValueAt(i, 1).toString());
-            
-            double parametrValue = 0;
-            String parametrValueStr = getValueAt(i, 2).toString();
-            if (Utils.tryParseDouble(parametrValueStr)) {
-                parametrValue = Double.valueOf(parametrValueStr);
-                pt.setParametr(parametrValue);
-                pt.setParametrParam(null);
+            if (getValueAt(i, 3) == null) {
+                pt.setParametr(Double.valueOf(getValueAt(i, 2).toString()));
             } else {
-                pt.setParametrParam(parametrValueStr);
+                pt.setDistribution(getValueAt(i, 3).toString(), Double.valueOf(getValueAt(i, 2).toString()));
             }
-            
-            String distributionValue = getValueAt(i, 3) != null
-                ? getValueAt(i, 3).toString()
-                : null;
-            String distributionParamName = getValueAt(i, 4) != null
-                ? getValueAt(i, 4).toString()
-                : null;
-            if (distributionParamName != null && !distributionParamName.isEmpty()) {
-                pt.setDistributionParam(distributionParamName);
-            } else {
-                pt.setDistribution(distributionValue, parametrValue);
-                pt.setDistributionParam(null);
-            }
-            
-            int priorityValue = Integer.valueOf(getValueAt(i, 5).toString());
-            String priorityParamName = getValueAt(i, 6) != null
-                ? getValueAt(i, 6).toString()
-                : null;
-            if (priorityParamName != null && !priorityParamName.isEmpty()) {
-                pt.setPriorityParam(priorityParamName);
-            } else {
-                pt.setPriority(priorityValue);
-                pt.setPriorityParam(null);
-            }
-            
-            String probabilityValueStr = getValueAt(i, 7).toString();
-            if (Utils.tryParseDouble(probabilityValueStr)) {
-                pt.setProbability(Double.valueOf(probabilityValueStr));
-                pt.setProbabilityParam(null);
-            } else {
-                pt.setProbabilityParam(probabilityValueStr);
-            }
+            pt.setPriority(Integer.valueOf(getValueAt(i, 4).toString()));
+            pt.setProbability(Double.valueOf(getValueAt(i, 5).toString()));
         }
         return graphPetriTransitionList;
     }

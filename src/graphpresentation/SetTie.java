@@ -10,20 +10,16 @@
  */
 package graphpresentation;
 
-import PetriObj.*;
-import graphnet.*;
-import utils.Utils;
-
 /**
  *
  * @author Оля
  */
-public class SetArc extends javax.swing.JFrame {
+public class SetTie extends javax.swing.JFrame {
 
     /**
      * Creates new form SetTie
      */
-    public SetArc(PetriNetsPanel panel) {
+    public SetTie(PetriNetsPanel panel) {
         initComponents();
         this.setLocationRelativeTo(null);
         this.panel = panel;
@@ -44,33 +40,22 @@ public class SetArc extends javax.swing.JFrame {
         quantityTextField = new javax.swing.JTextField();
         isInfRadioButton = new javax.swing.JRadioButton();
         jTextField2 = new javax.swing.JTextField();
-        quantityLabel1 = new javax.swing.JLabel();
-        infParamNameField = new javax.swing.JTextField();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Link parameters");
+        setTitle("Параметри зв'язку");
 
-        setTiePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic parameters"));
+        setTiePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Основні параметри"));
 
-        quantityLabel.setText("Number of links");
+        quantityLabel.setText("Кількість зв'язків");
 
-        jRadioButton1.setText("Use the formula");
+        jRadioButton1.setText("Використовувати формулу");
         jRadioButton1.setEnabled(false);
 
-        isInfRadioButton.setText("Information link");
+        isInfRadioButton.setText("Інформаційний зв'язок");
 
         jTextField2.setEnabled(false);
-
-        quantityLabel1.setText("Information link (parameter name)");
-
-        infParamNameField.setName(""); // NOI18N
-        infParamNameField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                infParamNameFieldActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout setTiePanelLayout = new javax.swing.GroupLayout(setTiePanel);
         setTiePanel.setLayout(setTiePanelLayout);
@@ -89,13 +74,8 @@ public class SetArc extends javax.swing.JFrame {
                             .addComponent(isInfRadioButton)))
                     .addGroup(setTiePanelLayout.createSequentialGroup()
                         .addGap(22, 22, 22)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(setTiePanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(quantityLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(infParamNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
         setTiePanelLayout.setVerticalGroup(
             setTiePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -110,21 +90,17 @@ public class SetArc extends javax.swing.JFrame {
                 .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(isInfRadioButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(setTiePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(quantityLabel1)
-                    .addComponent(infParamNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
-        okButton.setText("OK");
+        okButton.setText("Ок");
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
         });
 
-        cancelButton.setText("Cancel");
+        cancelButton.setText("Відмінити");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
@@ -144,7 +120,8 @@ public class SetArc extends javax.swing.JFrame {
                         .addGap(33, 33, 33)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(cancelButton)))
+                        .addComponent(cancelButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -152,11 +129,11 @@ public class SetArc extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(setTiePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cancelButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(cancelButton)
+                    .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         pack();
@@ -179,94 +156,40 @@ public class SetArc extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
-    private void infParamNameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infParamNameFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_infParamNameFieldActionPerformed
+    /**
+     * @param args the command line arguments
+     */
+    private void setQuantity() {
+       
+            choosenTie.setQuantity(Integer.valueOf(quantityTextField.getText()));
+       
 
-    private void setQuantity() { // modified by Katya 08.12.2016
-        String quantityValueStr = quantityTextField.getText();
-        if (Utils.tryParseInt(quantityValueStr)) {
-            choosenTie.setQuantity(Integer.valueOf(quantityValueStr));
-            if (choosenTie.getClass() == GraphArcIn.class) {
-                GraphArcIn chosenArc = (GraphArcIn)choosenTie;
-                ArcIn arcIn = chosenArc.getArcIn();
-                arcIn.setKParam(null);
-            } else {
-                GraphArcOut chosenArc = (GraphArcOut)choosenTie;
-                ArcOut arcOut = chosenArc.getArcOut();
-                arcOut.setKParam(null);
-            }
-        } else {
-            if (choosenTie.getClass() == GraphArcIn.class) {
-                GraphArcIn chosenArc = (GraphArcIn)choosenTie;
-                ArcIn arcIn = chosenArc.getArcIn();
-                arcIn.setKParam(quantityValueStr);
-            } else {
-                GraphArcOut chosenArc = (GraphArcOut)choosenTie;
-                ArcOut arcOut = chosenArc.getArcOut();
-                arcOut.setKParam(quantityValueStr);
-            }
-        }
     }
 
-    private void getQuantity() { // modified by Katya 08.12.2016
-        String quantityStr;
-        if (choosenTie.getClass() == GraphArcIn.class) {
-            GraphArcIn chosenArc = (GraphArcIn)choosenTie;
-            ArcIn arcIn = chosenArc.getArcIn();
-            quantityStr = arcIn.kIsParam()
-                ? arcIn.getKParamName()
-                : Integer.toString(choosenTie.getQuantity());
-        } else {
-            GraphArcOut chosenArc = (GraphArcOut)choosenTie;
-            ArcOut arcOut = chosenArc.getArcOut();
-            quantityStr = arcOut.kIsParam()
-                ? arcOut.getKParamName()
-                : Integer.toString(choosenTie.getQuantity());
-        }
-        quantityTextField.setText(quantityStr);
+    private void getQuantity() {
+        quantityTextField.setText(Integer.toString(choosenTie.getQuantity()));
     }
 
-    private void setIsInf() { // modified by Katya 08.12.2016
-        if (choosenTie.getClass() == GraphArcIn.class) {
-            boolean isInfValue = isInfRadioButton.isSelected();
-            String isInfParamName = infParamNameField.getText();
-            GraphArcIn chosenArc = (GraphArcIn)choosenTie;
-            ArcIn arcIn = chosenArc.getArcIn();
-            if (isInfParamName != null && !isInfParamName.isEmpty()) {
-                arcIn.setInfParam(isInfParamName);
-            } else {
-                arcIn.setInf(isInfValue);
-                arcIn.setInfParam(null);
-            }
-        } else {
-            choosenTie.setInf(false);
-        }
+    private void setIsInf() {
+        choosenTie.setInf(isInfRadioButton.isSelected());
+
     }
 
-    private void getIsInf() { // modified by Katya 08.12.2016
-        if (choosenTie.getClass() == GraphArcIn.class) {
-            GraphArcIn chosenArc = (GraphArcIn)choosenTie;
-            ArcIn arcIn = chosenArc.getArcIn();
-            isInfRadioButton.setSelected(choosenTie.getIsInf());
-            infParamNameField.setText(arcIn.getInfParamName());
-        } else {
-            isInfRadioButton.setSelected(false);
-            infParamNameField.setText(null);
-        }
+    private void getIsInf() {
+        isInfRadioButton.setSelected(choosenTie.getIsInf());
     }
 
-    private void setChoosenTie(GraphArc t) {
+    private void setChoosenTie(GraphTie t) {
         choosenTie = t;
     }
 
-    public void setInfo(GraphArc t) {
+    public void setInfo(GraphTie t) {
         setChoosenTie(t);
         getQuantity();
         getIsInf();
     }
     private PetriNetsPanel panel;
-    private GraphArc choosenTie;
+    private GraphTie choosenTie;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JRadioButton isInfRadioButton;
@@ -274,9 +197,7 @@ public class SetArc extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField2;
     private javax.swing.JButton okButton;
     private javax.swing.JLabel quantityLabel;
-    private javax.swing.JLabel quantityLabel1;
     private javax.swing.JTextField quantityTextField;
-    private javax.swing.JTextField infParamNameField;
     private javax.swing.JPanel setTiePanel;
     // End of variables declaration//GEN-END:variables
 }

@@ -16,23 +16,9 @@ import java.awt.geom.Point2D;
  */
 public class GraphPosition extends GraphElement {
     
-    private static  int diameter = 40;       // діаметр кола
-
-    /**
-     * @return the diameter
-     */
-    public static int getDiameter() {
-        return diameter;
-    }
-
-    /**
-     * @param aDiameter the diameter to set
-     */
-    public static void setDiameter(int aDiameter) {
-        diameter = aDiameter;
-    }
+    private static final int DIAMETER = 40;       // діаметр кола
  
-    private Ellipse2D graphElement=new Ellipse2D.Double(0,0, getDiameter(), getDiameter());  // координати розташування кола
+    private Ellipse2D graphElement=new Ellipse2D.Double(0,0, DIAMETER, DIAMETER);  // координати розташування кола
 
    public  GraphPosition() {
     }
@@ -50,14 +36,13 @@ public class GraphPosition extends GraphElement {
 
     
     public static int getDIAMETER() {
-        return getDiameter();
+        return DIAMETER;
     }
 
     
     @Override
     public void setNewCoordinates(Point2D p) {
-            graphElement.setFrame(p.getX() - getDiameter() / 2, p.getY() - getDiameter() / 2, getDiameter(), getDiameter());
-            
+            graphElement.setFrame(p.getX() - DIAMETER / 2, p.getY() - DIAMETER / 2, DIAMETER, DIAMETER);
     }
 
         
@@ -71,7 +56,7 @@ public class GraphPosition extends GraphElement {
 
     @Override
     public Point2D getGraphElementCenter() {
-        return new Point2D.Double(graphElement.getX() + getDiameter() / 2, graphElement.getY() + getDiameter() / 2);
+        return new Point2D.Double(graphElement.getX() + DIAMETER / 2, graphElement.getY() + DIAMETER / 2);
     }
 
   
@@ -83,7 +68,7 @@ public class GraphPosition extends GraphElement {
    
     @Override
     public  int getBorder() {
-        return getDiameter() / 2;
+        return DIAMETER / 2;
     }
     
 

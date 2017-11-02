@@ -5,7 +5,7 @@
 package graphnet;
 
 import PetriObj.ArcOut;
-import graphpresentation.GraphArc;
+import graphpresentation.GraphTie;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.io.Serializable;
@@ -16,22 +16,22 @@ import java.util.List;
  *
  * @author Инна
  */
-public class GraphArcOut extends GraphArc implements Serializable {
+public class GraphTieOut extends GraphTie implements Serializable {
 
-    private static ArrayList<GraphArcOut> graphTieOutList = new ArrayList<GraphArcOut>();  // added by Olha 24.09.12, cjrrect by Inna 28.11.2012
+    private static ArrayList<GraphTieOut> graphTieOutList = new ArrayList<GraphTieOut>();  // added by Olha 24.09.12, cjrrect by Inna 28.11.2012
     private ArcOut tie;
     
-   public GraphArcOut() { // додано Олею 28.09.12 для створення тимчасової дуги (тільки для промальовки) 
+   public GraphTieOut() { // додано Олею 28.09.12 для створення тимчасової дуги (тільки для промальовки) 
      super();
        tie = new ArcOut();
        //System.out.println("GraphTieOut  "+ tie.getNameT()+"  "+tie.getNumT()+"  "+tie.getNameP()+"  "+tie.getNumP());
     }
     
-     public GraphArcOut(ArcOut tieout){
+     public GraphTieOut(ArcOut tieout){
         tie = tieout;
    
     }
-     public ArcOut getArcOut()
+     public ArcOut getTieOut()
     {
     return tie;
     }
@@ -59,28 +59,34 @@ public class GraphArcOut extends GraphArc implements Serializable {
     @Override
     public void drawGraphElement(Graphics2D g) {
         Graphics2D g2 = (Graphics2D) g;
+       /* if (inf) {   ///НЕ буває такого...
+            Stroke drawingStroke = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{4, 4}, 0);
+            g2.setStroke(drawingStroke);
+            g2.draw(this.getGraphElement());
+            drawArrowHead(g2);
+        } else*/
+        {
         g2.setStroke(new BasicStroke());
         g2.draw(this.getGraphElement());
         drawArrowHead(g2);
-        if (tie.getQuantity() != 1 || tie.kIsParam()) {
-            String quantityString = tie.kIsParam() // added by Katya 08.12.2016
-                ? tie.getKParamName()
-                : Integer.toString(tie.getQuantity());
+        }
+        if (tie.getQuantity() != 1) {
             this.getAvgLine().setLocation((this.getGraphElement().getX1() + this.getGraphElement().getX2()) / 2, (this.getGraphElement().getY1() + this.getGraphElement().getY2()) / 2);
             g2.drawLine((int) this.getAvgLine().getX() + 5, (int) this.getAvgLine().getY() - 5, (int) this.getAvgLine().getX() - 5, (int) this.getAvgLine().getY() + 5);
-            g2.drawString(quantityString, (float) this.getAvgLine().getX(), (float) this.getAvgLine().getY() - 7);
+            g2.drawString(Integer.toString(tie.getQuantity()), (float) this.getAvgLine().getX(), (float) this.getAvgLine().getY() - 7);
         }
     }
+ 
 
-    public static ArrayList<GraphArcOut> getGraphTieOutList() {
+    public static ArrayList<GraphTieOut> getGraphTieOutList() {
         return graphTieOutList;
     }
     
-    public static ArrayList<ArcOut> getArcOutList() {  // added by Inna 1.11.2012
+    public static ArrayList<ArcOut> getTieOutList() {  // added by Inna 1.11.2012
         
         ArrayList<ArcOut> arrayTieOut = new ArrayList();
-        for (GraphArcOut e: graphTieOutList)
-            arrayTieOut.add(e.getArcOut());
+        for (GraphTieOut e: graphTieOutList)
+            arrayTieOut.add(e.getTieOut());
         return arrayTieOut;
     }
 //    public static void setTieOutList(ArrayList<TieOut> TieOutList) {
@@ -89,8 +95,8 @@ public class GraphArcOut extends GraphArc implements Serializable {
     public static void setNullTieOutList() {
         graphTieOutList.clear();
     }
-    public static void addGraphTieOutList(List<GraphArcOut> tieOut){ // added by Olha 14/11/2012
-      for (GraphArcOut to:tieOut) {
+    public static void addGraphTieOutList(List<GraphTieOut> tieOut){ // added by Olha 14/11/2012
+      for (GraphTieOut to:tieOut) {
           graphTieOutList.add(to);
       } 
     }

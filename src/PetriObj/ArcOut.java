@@ -7,10 +7,10 @@ import java.io.Serializable;
  * and open the template in the editor.
  */
 /**
- * This class for creating the arc(arc) between transition and place of Petri
+ * This class for creating the tie(arc) between transition and place of Petri
  * net (and directed from transion to place)
  *
- * @author Стеценко Інна
+ *  @author Inna V. Stetsenko
  */
 public class ArcOut implements Cloneable, Serializable {
 
@@ -22,11 +22,6 @@ public class ArcOut implements Cloneable, Serializable {
     private static int next = 0;
     private int number;
 
-    // whether k is a parameter; added by Katya 08.12.2016
-    private boolean kIsParam = false;
-    // param name
-    private String kParamName = null;
-    
     /**
      *
      */
@@ -65,25 +60,6 @@ public class ArcOut implements Cloneable, Serializable {
         next++;
     }
 
-    public boolean kIsParam() {
-        return kIsParam;
-    }
-    
-    public String getKParamName() {
-        return kParamName;
-    }
-    
-    public void setKParam(String paramName) {
-        if (paramName == null) {
-            kIsParam = false;
-            kParamName = null;
-        } else {
-            kIsParam = true;
-            kParamName = paramName;
-            k = 1;
-        }
-    }
-    
     /**
      * Set the counter of output arcs to zero.
      */
@@ -186,19 +162,19 @@ public class ArcOut implements Cloneable, Serializable {
     /**
      *
      * @return TieOut object with parameters which copy current parameters of
-     * this arc
+     * this tie
      * @throws java.lang.CloneNotSupportedException if Petri net has invalid structure
      */
     @Override
     public ArcOut clone() throws CloneNotSupportedException {
         super.clone();
-        ArcOut arc = new ArcOut(numT, numP, k); // коректніть номерів дуже важлива!!!
-        return arc;
+        ArcOut tie = new ArcOut(numT, numP, k); // коректніть номерів дуже важлива!!!
+        return tie;
 
     }
 
     public void printParameters() {
-        System.out.println("This arc has direction from  transition  with number " + numT + " to place with number " + numP
+        System.out.println("This tie has direction from  transition  with number " + numT + " to place with number " + numP
                 + " and has " + k + " value of multiplicity");
     }
 

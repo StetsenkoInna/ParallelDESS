@@ -11,9 +11,6 @@
 package graphpresentation;
 
 import graphnet.GraphPetriTransition;
-import PetriObj.*;
-import java.awt.*;
-import utils.Utils;
 
 /**
  *
@@ -24,9 +21,9 @@ public class SetTransition extends javax.swing.JFrame {
     /** Creates new form SetTransition */
     public SetTransition(PetriNetsPanel panel) {
         initComponents();
-        this.setLocationRelativeTo(null);
-        this.panel=panel;
-        this.setSize(new Dimension(374, 564));
+          this.setLocationRelativeTo(null);
+         this.panel=panel;
+
     }
 
     /** This method is called from within the constructor to
@@ -48,25 +45,21 @@ public class SetTransition extends javax.swing.JFrame {
         destributionComboBox = new javax.swing.JComboBox();
         paramDeviationLabel = new javax.swing.JLabel();
         paramDeviationTextField = new javax.swing.JTextField();
-        destributionLabel1 = new javax.swing.JLabel();
-        distributionParamNameField = new javax.swing.JTextField();
         priorityPanel = new javax.swing.JPanel();
         priorityLabel = new javax.swing.JLabel();
         prioritySpinner = new javax.swing.JSpinner();
-        priorityLabel1 = new javax.swing.JLabel();
-        priorityParamNameField = new javax.swing.JTextField();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         probabilityLabel = new javax.swing.JLabel();
         probabilityTextField = new javax.swing.JTextField();
 
-        setTitle("Transition parameters");
+        setTitle("Параметри переходу");
+        setResizable(false);
 
-        baseParametersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic parameters"));
-		baseParametersPanel.setSize(new Dimension(300, 74));
-		
-        nameLabel.setText("Name");
+        baseParametersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Базові параметри"));
+
+        nameLabel.setText("Ім'я");
 
         nameTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
@@ -75,29 +68,26 @@ public class SetTransition extends javax.swing.JFrame {
         baseParametersPanelLayout.setHorizontalGroup(
             baseParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(baseParametersPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(nameLabel)
+                .addGap(53, 53, 53)
+                .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(97, Short.MAX_VALUE))
         );
         baseParametersPanelLayout.setVerticalGroup(
             baseParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(baseParametersPanelLayout.createSequentialGroup()
-                .addGroup(baseParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nameLabel)
-                    .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(baseParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(nameLabel)
+                .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        timeDelayPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Time delay"));
+        timeDelayPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Часова затримка"));
 
-        parametrLabel.setText("Delay mean value");
+        parametrLabel.setText("Середнє значення затримки");
 
         parametrTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         parametrTextField.setText("0.0");
 
-        destributionLabel.setText("Time delay distribution");
+        destributionLabel.setText("Розподіл часу затримки");
 
         destributionComboBox.setEditable(true);
         destributionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "null", "exp", "unif", "norm" }));
@@ -107,15 +97,11 @@ public class SetTransition extends javax.swing.JFrame {
             }
         });
 
-        paramDeviationLabel.setText("Standard deviation");
+        paramDeviationLabel.setText("Середнє квадр. відхилення");
 
         paramDeviationTextField.setEditable(false);
         paramDeviationTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         paramDeviationTextField.setText("0.0");
-
-        destributionLabel1.setText("Distribution (parameter name)");
-
-        distributionParamNameField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         javax.swing.GroupLayout timeDelayPanelLayout = new javax.swing.GroupLayout(timeDelayPanel);
         timeDelayPanel.setLayout(timeDelayPanelLayout);
@@ -130,11 +116,7 @@ public class SetTransition extends javax.swing.JFrame {
                     .addGroup(timeDelayPanelLayout.createSequentialGroup()
                         .addComponent(destributionLabel)
                         .addGap(18, 18, 18)
-                        .addComponent(destributionComboBox, 0, 99, Short.MAX_VALUE))
-                    .addGroup(timeDelayPanelLayout.createSequentialGroup()
-                        .addComponent(destributionLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(distributionParamNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(destributionComboBox, 0, 99, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(timeDelayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(timeDelayPanelLayout.createSequentialGroup()
@@ -152,36 +134,28 @@ public class SetTransition extends javax.swing.JFrame {
                 .addGroup(timeDelayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(parametrLabel)
                     .addComponent(parametrTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
                 .addGroup(timeDelayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(destributionLabel)
-                    .addComponent(destributionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(timeDelayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(destributionLabel1)
-                    .addComponent(distributionParamNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(11, 11, 11))
+                    .addComponent(destributionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
             .addGroup(timeDelayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(timeDelayPanelLayout.createSequentialGroup()
                     .addGap(29, 29, 29)
                     .addComponent(paramDeviationLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(66, Short.MAX_VALUE)))
+                    .addContainerGap(42, Short.MAX_VALUE)))
             .addGroup(timeDelayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(timeDelayPanelLayout.createSequentialGroup()
                     .addGap(30, 30, 30)
                     .addComponent(paramDeviationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(65, Short.MAX_VALUE)))
+                    .addContainerGap(43, Short.MAX_VALUE)))
         );
 
-        priorityPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Transition priority"));
+        priorityPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Пріоритет переходу"));
 
-        priorityLabel.setText("Priority value");
+        priorityLabel.setText("Значення пріоритету");
 
         prioritySpinner.setModel(new javax.swing.SpinnerNumberModel());
-
-        priorityLabel1.setText("Priority (parameter name)");
-
-        priorityParamNameField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         javax.swing.GroupLayout priorityPanelLayout = new javax.swing.GroupLayout(priorityPanel);
         priorityPanel.setLayout(priorityPanelLayout);
@@ -189,15 +163,9 @@ public class SetTransition extends javax.swing.JFrame {
             priorityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(priorityPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(priorityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(priorityPanelLayout.createSequentialGroup()
-                        .addComponent(priorityLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(priorityParamNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(priorityPanelLayout.createSequentialGroup()
-                        .addComponent(priorityLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 95, Short.MAX_VALUE)
-                        .addComponent(prioritySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(priorityLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                .addComponent(prioritySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         priorityPanelLayout.setVerticalGroup(
@@ -206,30 +174,26 @@ public class SetTransition extends javax.swing.JFrame {
                 .addGroup(priorityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(priorityLabel)
                     .addComponent(prioritySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(priorityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(priorityLabel1)
-                    .addComponent(priorityParamNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        okButton.setText("OK");
+        okButton.setText("Ok");
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
         });
 
-        cancelButton.setText("Cancel");
+        cancelButton.setText("Відмінити");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Activation probability"));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Ймовірність спрацьовування", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, new java.awt.Color(0, 0, 0)));
 
-        probabilityLabel.setText("Probability value");
+        probabilityLabel.setText("Значення ймовірності");
 
         probabilityTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         probabilityTextField.setText("1.0");
@@ -247,7 +211,7 @@ public class SetTransition extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(probabilityLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(probabilityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(probabilityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -287,7 +251,7 @@ public class SetTransition extends javax.swing.JFrame {
                 .addComponent(timeDelayPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(priorityPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -296,7 +260,7 @@ public class SetTransition extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel4.getAccessibleContext().setAccessibleName("Probability");
+        jPanel4.getAccessibleContext().setAccessibleName("Ймовірність");
 
         getAccessibleContext().setAccessibleName(""); // NOI18N
 
@@ -337,143 +301,73 @@ public class SetTransition extends javax.swing.JFrame {
       * @param args the command line arguments
       */
 
-    private void setTName(){
-        choosenPetriT.getPetriTransition().setName(nameTextField.getText());
-    }
-
-    private void setTimeDelay() { // modified by Katya 08.12.2016
-        PetriT petriTran = choosenPetriT.getPetriTransition();
-        String parametrValueStr = parametrTextField.getText();
-        double parametrValue = 0;
-        if (Utils.tryParseDouble(parametrValueStr)) {
-            parametrValue = Double.valueOf(parametrValueStr);
-            petriTran.setParametr(parametrValue);
-            petriTran.setParametrParam(null);
-        } else {
-            petriTran.setParametrParam(parametrValueStr);
-        }
+private void setTName(){
+    choosenPetriT.getPetriTransition().setName(nameTextField.getText());
+}
+    private void setTimeDelay() {
+  
+        choosenPetriT.getPetriTransition().setParametr(Double.valueOf(parametrTextField.getText()));
+        choosenPetriT.getPetriTransition().setProbability(Double.valueOf(probabilityTextField.getText()));
+        if (destributionComboBox.getSelectedIndex()==0) 
+           choosenPetriT.getPetriTransition().setDistribution(null, Double.valueOf(parametrTextField.getText()));
+       if (destributionComboBox.getSelectedIndex()==1) 
+       choosenPetriT.getPetriTransition().setDistribution("exp", Double.valueOf(parametrTextField.getText()));
         
-        String probabilityValueStr = probabilityTextField.getText();
-        if (Utils.tryParseDouble(probabilityValueStr)) {
-            petriTran.setProbability(Double.valueOf(probabilityValueStr));
-            petriTran.setProbabilityParam(null);
-        } else {
-            petriTran.setProbabilityParam(probabilityValueStr);
-        }
-        
-        String distributionParamName = distributionParamNameField.getText();
-        if (distributionParamName != null && !distributionParamName.isEmpty()) {
-            petriTran.setDistributionParam(distributionParamName);
-        } else {
-            if (destributionComboBox.getSelectedIndex()==0) {
-                petriTran.setDistribution(null, parametrValue);
-                paramDeviationTextField.setEditable(false);
-            }
-            if (destributionComboBox.getSelectedIndex()==1) {
-                petriTran.setDistribution("exp", parametrValue);
-                paramDeviationTextField.setEditable(false);
-            }
-            if (destributionComboBox.getSelectedIndex()==2) { 
-                petriTran.setDistribution("unif", parametrValue);
+       if (destributionComboBox.getSelectedIndex()==2) 
+           { 
+               choosenPetriT.getPetriTransition().setDistribution("unif", Double.valueOf(parametrTextField.getText()));
+               paramDeviationTextField.setEditable(true);
+               choosenPetriT.getPetriTransition().setParamDeviation(Double.valueOf(paramDeviationTextField.getText()));
+           }
+       if (destributionComboBox.getSelectedIndex()==3) 
+            { 
+                choosenPetriT.getPetriTransition().setDistribution("norm", Double.valueOf(parametrTextField.getText()));
                 paramDeviationTextField.setEditable(true);
-                petriTran.setParamDeviation(Double.valueOf(paramDeviationTextField.getText()));
+                choosenPetriT.getPetriTransition().setParamDeviation(Double.valueOf(paramDeviationTextField.getText()));
             }
-            if (destributionComboBox.getSelectedIndex()==3) { 
-                petriTran.setDistribution("norm", parametrValue);
-                paramDeviationTextField.setEditable(true);
-                petriTran.setParamDeviation(Double.valueOf(paramDeviationTextField.getText()));
-            }
-            petriTran.setDistributionParam(null);
-        }
-    }
+       
+      
+     }
 
-    private void setPriority() { // modified by Katya 08.12.2016
-        PetriT petriTran = choosenPetriT.getPetriTransition();
-        int priorityValue = (Integer) prioritySpinner.getModel().getValue();
-        String priorityParamName = priorityParamNameField.getText();
-        if (priorityParamName != null && !priorityParamName.isEmpty()) {
-            petriTran.setPriorityParam(priorityParamName);
-        } else {
-            petriTran.setPriority(priorityValue);
-            petriTran.setPriorityParam(null);
-        }
-    }
+     private void setPriority() {
+        choosenPetriT.getPetriTransition().setPriority((Integer) prioritySpinner.getModel().getValue());
+     }
 
-    public void getPriority() { // modified by Katya 08.12.2016
-        PetriT petriTran = choosenPetriT.getPetriTransition();
-        prioritySpinner.setValue(petriTran.getPriority());
-        priorityParamNameField.setText(petriTran.getPriorityParamName());
-    }
-    
-    private void getTName() {
-        nameTextField.setText(choosenPetriT.getPetriTransition().getName());
-    }
-    
-    private void getTimeDelay() { // modified by Katya 08.12.2016
-        PetriT petriTran = choosenPetriT.getPetriTransition();
-        String parametrStr = petriTran.parametrIsParam()
-            ? petriTran.getParametrParamName()
-            : Double.toString(petriTran.getParametr());
-        parametrTextField.setText(parametrStr);
-        
-        String probabilityStr = petriTran.probabilityIsParam()
-            ? petriTran.getProbabilityParamName()
-            : Double.toString(petriTran.getProbability());
-        probabilityTextField.setText(probabilityStr);
-        
-        String distribution = petriTran.getDistribution();
-        if (distribution == null) {
-            destributionComboBox.setSelectedIndex(0);
-            paramDeviationTextField.setEditable(false);
-        }
-        if ("exp".equals(distribution)) {
-            destributionComboBox.setSelectedIndex(1);
-            paramDeviationTextField.setEditable(false);
-        }
-        if ("unif".equals(distribution)) {
-            destributionComboBox.setSelectedIndex(2);
-            paramDeviationTextField.setEditable(true);
-            paramDeviationTextField.setText(Double.toString(petriTran.getParamDeviation()));
-        }
-        if ("norm".equals(distribution)) {
-            destributionComboBox.setSelectedIndex(3);
-            paramDeviationTextField.setEditable(true);
-            paramDeviationTextField.setText(Double.toString(petriTran.getParamDeviation()));
-        }
-        distributionParamNameField.setText(petriTran.getDistributionParamName());
-    }
-    
-    private void setChoosen(GraphElement e){
-        choosenPetriT=(GraphPetriTransition)e;
-    }
-    
-    public void setInfo(GraphElement e){
-        setChoosen(e);
-        getTName();
-        getTimeDelay();
-        getPriority();
-    }
-    
-    private PetriNetsPanel panel;
-    private GraphPetriTransition choosenPetriT;
+     public void getPriority() {
+         prioritySpinner.setValue(choosenPetriT.getPetriTransition().getPriority());
+             }
+     private void getTName(){
+          nameTextField.setText(choosenPetriT.getPetriTransition().getName());
+     }
+     private void getTimeDelay(){
+          parametrTextField.setText(Double.toString(choosenPetriT.getPetriTransition().getParametr()));
+           probabilityTextField.setText(Double.toString(choosenPetriT.getPetriTransition().getProbability()));
+     }
+     private void setChoosen(GraphElement e){
+         choosenPetriT=(GraphPetriTransition)e;
+     }  
+     public void setInfo(GraphElement e){
+         setChoosen(e);
+         getTName();
+         getTimeDelay();
+         getPriority();
+     }
+     private PetriNetsPanel panel;
+     private GraphPetriTransition choosenPetriT;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel baseParametersPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JComboBox destributionComboBox;
     private javax.swing.JLabel destributionLabel;
-    private javax.swing.JLabel destributionLabel1;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JTextField nameTextField;
-    private javax.swing.JTextField priorityParamNameField;
-    private javax.swing.JTextField distributionParamNameField;
     private javax.swing.JButton okButton;
     private javax.swing.JLabel paramDeviationLabel;
     private javax.swing.JTextField paramDeviationTextField;
     private javax.swing.JLabel parametrLabel;
     private javax.swing.JTextField parametrTextField;
     private javax.swing.JLabel priorityLabel;
-    private javax.swing.JLabel priorityLabel1;
     private javax.swing.JPanel priorityPanel;
     private javax.swing.JSpinner prioritySpinner;
     private javax.swing.JLabel probabilityLabel;

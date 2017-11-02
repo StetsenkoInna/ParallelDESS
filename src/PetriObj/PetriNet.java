@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 /**
  * This class provides constructing Petri net
  *
- * @author Стеценко Інна
+ *  @author Inna V. Stetsenko
  */
 public class PetriNet implements Cloneable, Serializable {
 
@@ -25,7 +25,7 @@ public class PetriNet implements Cloneable, Serializable {
     private PetriT[] ListT = new PetriT[numT];
     private ArcIn[] ListIn = new ArcIn[numIn];
     private ArcOut[] ListOut = new ArcOut[numOut];
-    
+
     /**
      * Construct Petri net for given set of places, set of transitions, set of
      * arcs and the name of Petri net
@@ -96,7 +96,6 @@ public class PetriNet implements Cloneable, Serializable {
         for (int j = 0; j < numIn; j++) {
             ListIn[j] = In.get(j);
         }
-        
         for (int j = 0; j < numOut; j++) {
             ListOut[j] = Out.get(j);
         }
@@ -105,6 +104,7 @@ public class PetriNet implements Cloneable, Serializable {
             transition.createInP(ListP, ListIn);
             transition.createOutP(ListP, ListOut);
         }
+
     }
 
     /**
@@ -258,15 +258,15 @@ public class PetriNet implements Cloneable, Serializable {
     /**
      *
      */
-    public void printArcs() //додано 1.10.2012
+    public void printTies() //додано 1.10.2012
     {
-        System.out.println("Petri net " + name + " arcs: " + ListIn.length + " input arcs snd " + ListOut.length + " output arcs");
+        System.out.println("Petri net " + name + " ties: " + ListIn.length + " input ties snd " + ListOut.length + " output ties");
 
-        for (ArcIn arcs : ListIn) {
-            arcs.print();
+        for (ArcIn ties : ListIn) {
+            ties.print();
         }
-        for (ArcOut arcs : ListOut) {
-            arcs.print();
+        for (ArcOut ties : ListOut) {
+            ties.print();
         }
     }
 
@@ -318,28 +318,5 @@ public class PetriNet implements Cloneable, Serializable {
 
         return net;
     }
-    
-    public boolean hasParameters() { // added by Katya 08.12.2016
-        for (PetriP petriPlace : ListP) {
-            if (petriPlace.markIsParam()) {
-                return true;
-            }
-        }
-        for (PetriT petriTran : ListT) {
-            if (petriTran.distributionIsParam() || petriTran.parametrIsParam() || petriTran.priorityIsParam() || petriTran.probabilityIsParam()) {
-                return true;
-            }
-        }
-        for (ArcIn arcIn : ListIn) {
-            if (arcIn.infIsParam() || arcIn.kIsParam()) {
-                return true;
-            }
-        }
-        for (ArcOut arcOut : ListOut) {
-            if (arcOut.kIsParam()) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 }

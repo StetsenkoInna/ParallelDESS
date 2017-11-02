@@ -14,37 +14,9 @@ import java.awt.geom.Rectangle2D;
  * @author Ольга
  */
 public class GraphTransition extends GraphElement{
-    private static int height = 50;
-    private static int width = 5;
-
-    /**
-     * @return the height
-     */
-    public static int getHeight() {
-        return height;
-    }
-
-    /**
-     * @param aHeight the height to set
-     */
-    public static void setHeight(int aHeight) {
-        height = aHeight;
-    }
-
-    /**
-     * @return the width
-     */
-    public static int getWidth() {
-        return width;
-    }
-
-    /**
-     * @param aWidth the width to set
-     */
-    public static void setWidth(int aWidth) {
-        width = aWidth;
-    }
-    private Rectangle2D graphElement=new Rectangle2D.Double(0,0, getWidth(), getHeight());;
+    private static final int HEIGHT = 50;
+    private static final int WIDTH = 5;
+    private Rectangle2D graphElement=new Rectangle2D.Double(0,0, WIDTH, HEIGHT);;
 
 
     public GraphTransition(){
@@ -60,13 +32,13 @@ public class GraphTransition extends GraphElement{
 
     @Override
     public void setNewCoordinates(Point2D p){
-        graphElement.setFrame(p.getX() - getWidth() / 2, p.getY() - getHeight() / 2, getWidth(), getHeight());
+        graphElement.setFrame(p.getX() - WIDTH / 2, p.getY() - HEIGHT / 2, WIDTH, HEIGHT);
     }
 
    
     @Override
     public boolean isGraphElement(Point2D p){
-        if (graphElement.contains(p) || new Line2D.Double(new Point2D.Double(graphElement.getMaxX(),graphElement.getMinY()),new Point2D.Double(graphElement.getMinX(),graphElement.getMaxY())).ptSegDist(p)<getWidth()*2) {
+        if (graphElement.contains(p) || new Line2D.Double(new Point2D.Double(graphElement.getMaxX(),graphElement.getMinY()),new Point2D.Double(graphElement.getMinX(),graphElement.getMaxY())).ptSegDist(p)<WIDTH*2) {
             return true;
         }
         return false;
@@ -75,7 +47,7 @@ public class GraphTransition extends GraphElement{
   
     @Override
     public Point2D getGraphElementCenter(){
-        return new Point2D.Double(graphElement.getX() + getWidth() / 2, graphElement.getY() + getHeight() / 2);
+        return new Point2D.Double(graphElement.getX() + WIDTH / 2, graphElement.getY() + HEIGHT / 2);
     }
 
    
@@ -87,16 +59,16 @@ public class GraphTransition extends GraphElement{
     
     @Override
     public  int getBorder() {
-        return getWidth();
+        return WIDTH;
     }
 
 
     public static int getHEIGHT() {
-        return getHeight();
+        return HEIGHT;
     }
 
     public static int getWIDTH() {
-        return getWidth();
+        return WIDTH;
     }
 
     public Rectangle2D getGraphElement() {

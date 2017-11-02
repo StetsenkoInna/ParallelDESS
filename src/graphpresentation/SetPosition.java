@@ -1,9 +1,16 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/*
+ * SetPosition.java
+ *
+ * Created on 04.12.2011, 13:27:59
+ */
 package graphpresentation;
 
 import graphnet.GraphPetriPlace;
-import PetriObj.PetriP;
-import java.awt.*;
-import utils.Utils;
 
 /**
  *
@@ -18,7 +25,7 @@ public class SetPosition extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         this.panel = panel;
-        this.setSize(new Dimension(320, 222));
+
     }
 
     /**
@@ -38,13 +45,14 @@ public class SetPosition extends javax.swing.JFrame {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
-        setTitle("Place parameters");
+        setTitle("Параметри вершини");
+        setResizable(false);
 
-        setPositionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic parameters"));
+        setPositionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Основні параметри"));
 
-        nameLabel.setText("Name");
+        nameLabel.setText("Ім'я");
 
-        markLabel.setText("Markers");
+        markLabel.setText("Маркування");
 
         nameTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
@@ -76,17 +84,17 @@ public class SetPosition extends javax.swing.JFrame {
                 .addGroup(setPositionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(markLabel)
                     .addComponent(markTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
-        okButton.setText("OK");
+        okButton.setText("Ок");
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
         });
 
-        cancelButton.setText("Cancel");
+        cancelButton.setText("Відмінити");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
@@ -131,7 +139,7 @@ public class SetPosition extends javax.swing.JFrame {
             this.setVisible(false);
         } catch (NumberFormatException e) {
             markTextField.setText("");
-            markTextField.setToolTipText("Enter an integer");
+            markTextField.setToolTipText("Введіть ціле число");
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -145,15 +153,8 @@ public class SetPosition extends javax.swing.JFrame {
         choosenPetriP.getPetriPlace().setName(nameTextField.getText());
     }
 
-    private void setPMark() { // modified by Katya 08.12.2016
-        PetriP petriPlace = choosenPetriP.getPetriPlace();
-        String markValueStr = markTextField.getText();
-        if (Utils.tryParseInt(markValueStr)) {
-            petriPlace.setMark(Integer.valueOf(markValueStr));
-            petriPlace.setMarkParam(null);
-        } else {
-            petriPlace.setMarkParam(markValueStr);
-        }
+    private void setPMark() {
+        choosenPetriP.getPetriPlace().setMark(Integer.valueOf(markTextField.getText()));
     }
 
     private void setChoosen(GraphElement e) {
@@ -164,12 +165,8 @@ public class SetPosition extends javax.swing.JFrame {
         nameTextField.setText(choosenPetriP.getPetriPlace().getName());
     }
 
-    private void getPMark() { // modified by Katya 08.12.2016
-        PetriP petriPlace = choosenPetriP.getPetriPlace();
-        String markStr = petriPlace.markIsParam()
-            ? petriPlace.getMarkParamName()
-            : Integer.toString(petriPlace.getMark());
-        markTextField.setText(markStr);
+    private void getPMark() {
+        markTextField.setText(Integer.toString(choosenPetriP.getPetriPlace().getMark()));
     }
 
     public void setInfo(GraphElement e) {

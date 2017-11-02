@@ -7,36 +7,33 @@ package graphreuse;
 import PetriObj.ArcOut;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
-import graphnet.GraphArcOut;
-import utils.Utils;
+import graphnet.GraphTieOut;
 
 /**
  *
  * @author User
  */
-public class PetriArcOutTableModel extends AbstractTableModel {
+public class PetriTieOutTableModel extends AbstractTableModel {
 
     private final int TIE_PARAMETERS = 1;
     private int row;
     private int column = TIE_PARAMETERS + 1;
     private Object[][] mass;
-    private static String[] COLUMN_NAMES = {"Arc", "Number of links"};
-    private ArrayList<GraphArcOut> graphPetriArcOutList;
+    private static String[] COLUMN_NAMES = {"Дуга", "Кількість зв'язків"};
+    private ArrayList<GraphTieOut> graphPetriTieOutList;
 
-    public PetriArcOutTableModel(){
+    public PetriTieOutTableModel(){
         
     }
     
-    public void setGraphPetriArcOutList(ArrayList<GraphArcOut> list) {
-        graphPetriArcOutList = list;
+    public void setGraphPetriTieOutList(ArrayList<GraphTieOut> list) {
+        graphPetriTieOutList = list;
         row = list.size();
         this.mass = new Object[this.row][this.column];
         for (int i = 0; i < row; i++) {
-            ArcOut to = list.get(i).getArcOut();
+            ArcOut to = list.get(i).getTieOut();
             mass[i][0] = to.getNameT() + " -> " + to.getNameP();
-            mass[i][1] = to.kIsParam() // modified by Katya 08.12.2016
-                ? to.getKParamName()
-                : to.getQuantity();
+            mass[i][1] = to.getQuantity();
         }
     }
 
@@ -60,22 +57,16 @@ public class PetriArcOutTableModel extends AbstractTableModel {
     }
 
     @Override
-    public Class getColumnClass(int c) { // modified by Katya 08.12.2016
-        return String.class;
+    public Class getColumnClass(int c) {
+        return getValueAt(0, c).getClass();
     }
 
-    public ArrayList<GraphArcOut> createGraphPetriArcOutList() { // modified by Katya 08.12.2016
-        for (int i = 0; i < graphPetriArcOutList.size(); i++) {
-            ArcOut to = graphPetriArcOutList.get(i).getArcOut();
-            String quantityValueStr = getValueAt(i, 1).toString();
-            if (Utils.tryParseInt(quantityValueStr)) {
-                to.setQuantity(Integer.valueOf(quantityValueStr));
-                to.setKParam(null);
-            } else {
-                to.setKParam(quantityValueStr);
-            }
+    public ArrayList<GraphTieOut> createGraphPetriTieOutList() {
+        for (int i = 0; i < graphPetriTieOutList.size(); i++) {
+            ArcOut to = graphPetriTieOutList.get(i).getTieOut();
+            to.setQuantity(Integer.valueOf(getValueAt(i, 1).toString()));
         }
-        return graphPetriArcOutList;
+        return graphPetriTieOutList;
     }
 
     @Override

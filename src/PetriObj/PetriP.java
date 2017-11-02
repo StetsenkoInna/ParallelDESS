@@ -9,9 +9,9 @@ import java.io.Serializable;
 /**
  * This class for creating the place of Petri net.
  *
- * @author Стеценко Інна
+ *  @author Inna V. Stetsenko
  */
-public class PetriP extends PetriMainElement implements Cloneable, Serializable { // inheritance added by Katya 20.11.2016
+public class PetriP implements Cloneable, Serializable {
 
     private int mark;
     private String name;
@@ -20,12 +20,8 @@ public class PetriP extends PetriMainElement implements Cloneable, Serializable 
     private static int next = 0;//додано 1.10.2012, лічильник об"єктів
     private int observedMax;
     private int observedMin;
+    private boolean external; // 28.07.2016 position is external if it is shared for other Petri-object
 
-    // whether mark is a parameter; added by Katya 08.12.2016
-    private boolean markIsParam = false;
-    // param name
-    private String markParamName = null;
-    
     /**
      *
      * @param n name of place
@@ -55,25 +51,6 @@ public class PetriP extends PetriMainElement implements Cloneable, Serializable 
         observedMin = 0;
     }
 
-    public boolean markIsParam() {
-        return markIsParam;
-    }
-    
-    public String getMarkParamName() {
-        return markParamName;
-    }
-    
-    public void setMarkParam(String paramName) {
-        if (paramName == null) {
-            markIsParam = false;
-            markParamName = null;
-        } else {
-            markIsParam = true;
-            markParamName = paramName;
-            mark = 0;
-        }
-    }
-    
     /**
      * Set the counter of places to zero.
      */
@@ -89,8 +66,9 @@ public class PetriP extends PetriMainElement implements Cloneable, Serializable 
      * @param a value for recalculate of mean value (value equals product of
      * marking and time divided by time modeling)
      */
-    public void changeMean(double a) {
+    public synchronized void changeMean(double a) { //оскільки є спільні позиції
         mean = mean + (mark - mean) * a;
+        
     }
 
     /**
@@ -105,7 +83,7 @@ public class PetriP extends PetriMainElement implements Cloneable, Serializable 
      *
      * @param a value on which increase the quantity of markers
      */
-    public void increaseMark(int a) {
+    public synchronized void increaseMark(int a) {
         mark += a;
         if (observedMax < mark) {
             observedMax = mark;
@@ -120,7 +98,7 @@ public class PetriP extends PetriMainElement implements Cloneable, Serializable 
      *
      * @param a value on which decrease the quantity of markers
      */
-    public void decreaseMark(int a) {
+    public synchronized void decreaseMark(int a) {
         mark -= a;
         if (observedMax < mark) {
             observedMax = mark;
@@ -134,7 +112,7 @@ public class PetriP extends PetriMainElement implements Cloneable, Serializable 
      *
      * @return current quantity of markers
      */
-    public int getMark() {
+    public synchronized int getMark() {
         return mark;
     }
 
@@ -204,6 +182,20 @@ public class PetriP extends PetriMainElement implements Cloneable, Serializable 
     public void printParameters() {
         System.out.println("Place " + name + "has such parametrs: \n"
                 + " number " + number + ", mark " + mark);
+    }
+
+    /**
+     * @return the external
+     */
+    public boolean isExternal() {
+        return external;
+    }
+
+    /**
+     * @param external the external to set
+     */
+    public void setExternal(boolean external) {
+        this.external = external;
     }
 
 }

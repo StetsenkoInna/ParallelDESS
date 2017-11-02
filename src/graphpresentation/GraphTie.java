@@ -15,7 +15,7 @@ import java.io.Serializable;
  *
  * @author Ольга
  */
-public class GraphArc implements Serializable{
+public class GraphTie implements Serializable{
     
  
     private Line2D graphElement;
@@ -23,10 +23,10 @@ public class GraphArc implements Serializable{
     private GraphElement endElement;
  
     private Point2D avgLine = new Point2D.Double(0, 0);  //static
-    private boolean firstArc;
-    private boolean secondArc;
+    private boolean firstTie;
+    private boolean secondTie;
 
-    public GraphArc()
+    public GraphTie()
     {
     
     }
@@ -35,8 +35,8 @@ public class GraphArc implements Serializable{
 
     }
 
-    // create new Arc   set Begin Element
-    public void settingNewArc(GraphElement e){
+    // create new Tie   set Begin Element
+    public void settingNewTie(GraphElement e){
       if(e!=null){ //add by Inna 26.01.2013
          setBeginElement(e);
          graphElement = new Line2D.Double(0, 0, 0, 0);
@@ -45,7 +45,7 @@ public class GraphArc implements Serializable{
     }
 
     //setting end element
-    public boolean finishSettingNewArc(GraphElement e){
+    public boolean finishSettingNewTie(GraphElement e){
         if(beginElement!=null) { //added by Inna 26.01.2013
             if (beginElement.getClass().equals(e.getClass())) {
                 return false;
@@ -81,7 +81,10 @@ public class GraphArc implements Serializable{
     
 
     public boolean isGraphElement(Point2D p){
-        return graphElement.contains(p);
+        if (graphElement.contains(p)) {
+            return true;
+        }
+        return false;
     }
 
     public void movingBeginElement(Point2D p){
@@ -101,7 +104,7 @@ public class GraphArc implements Serializable{
         graphElement.setLine(beginElement.getGraphElementCenter(), p);
     }
 
-    public void drawArrowHead(Graphics2D g) {
+    public void drawArrowHead(Graphics2D g1) {
         AffineTransform tx = new AffineTransform();
         Polygon arrowHead = new Polygon();
         arrowHead.addPoint(0, -2);
@@ -112,26 +115,34 @@ public class GraphArc implements Serializable{
         tx.translate(graphElement.getX2(), graphElement.getY2());
         tx.rotate((angle - Math.PI / 2d));
         
-        Graphics2D g2 = (Graphics2D) g.create();
-        
-        g2.transform(tx);
-        g2.fill(arrowHead);
-        g2.dispose();
+        Graphics2D g = (Graphics2D) g1.create();
+        g.transform(tx);
+        g.fill(arrowHead);
+        g.dispose();
        
         
     }
 
      public void changeBorder() {
         double x, y, k, b, r, yy, rr, xx, dd, ii1, ii2, jj1, jj2;
-        if (firstArc) {
+        if (firstTie) {
+          
             y = graphElement.getY2() - 10;
+            r = endElement.getBorder();
+            rr = beginElement.getBorder();
             yy = graphElement.getY1() - 10;
-        } else if (secondArc) {
+        } else if (secondTie) {
+         
             y = graphElement.getY2() + 10;
+            r = endElement.getBorder();
             yy = graphElement.getY1() + 10;
+            rr = beginElement.getBorder();
         } else {
+           
             y = graphElement.getY2();
+            r = endElement.getBorder();
             yy = graphElement.getY1();
+            rr = beginElement.getBorder();
         }
       
         x = graphElement.getX2();
@@ -166,17 +177,20 @@ public class GraphArc implements Serializable{
         }
     }
 
-    public void twoArcs(GraphArc t) {
-        t.secondArc = true;
-        this.firstArc = true;
+    public void twoTies(GraphTie t) {
+        t.secondTie = true;
+        this.firstTie = true;
     }
 
    
      public boolean isEnoughDistance(Point2D p) {
-        return graphElement.ptSegDist(p) < 3;
+        if (graphElement.ptSegDist(p) < 3) {
+            return true;
+        }
+        return false;
     }
 
-public void updateCoordinates() { // метод для оновлення інформації щодо координат елементу (для перемалювання) 09.01.13
+public void updateCoordinates() { // метод для обновлення інформація щодо координат елементу (для перемалювання) 09.01.13
         graphElement.setLine(beginElement.getGraphElementCenter(), endElement.getGraphElementCenter());
         changeBorder();
     }

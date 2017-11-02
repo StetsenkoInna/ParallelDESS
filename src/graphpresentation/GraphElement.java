@@ -49,8 +49,4 @@ public class GraphElement implements Serializable{
        public int getNumber(){
            return 0;
        }
-       
-       public void resize(){
-           
-       }
 }
