@@ -8,6 +8,7 @@ package LibTest;
 import static LibTest.TestPetriObjModel.*;
 
 import PetriObj.ExceptionInvalidNetStructure;
+import PetriObj.ExceptionInvalidTimeDelay;
 
 import PetriObj.PetriObjModel;
 import PetriObj.PetriSim;
@@ -22,7 +23,7 @@ import java.util.logging.Logger;
  * @author Inna
  */
 public class TestParallel {
-    public static void main(String[] args) throws ExceptionInvalidNetStructure {
+    public static void main(String[] args) throws ExceptionInvalidNetStructure, ExceptionInvalidTimeDelay {
        
         ArrayList<Thread> threads = new ArrayList<>();
         double time= 100000;

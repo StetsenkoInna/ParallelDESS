@@ -9,6 +9,57 @@ import PetriObj.ExceptionInvalidTimeDelay;
 import java.util.ArrayList;
 public class NetLibrary {
     
+    public static PetriNet CreateNetSMOgroup(int numInGroup,int numChannel, double timeMean) throws ExceptionInvalidNetStructure{
+        ArrayList<PetriP> d_P = new ArrayList<PetriP>();
+        ArrayList<PetriT> d_T = new ArrayList<PetriT>();
+        ArrayList<ArcIn> d_In = new ArrayList<ArcIn>();
+        ArrayList<ArcOut> d_Out = new ArrayList<ArcOut>();
+        d_P.add(new PetriP("P0", 0));
+        for (int j = 0; j < numInGroup; j++) {
+            d_P.add(new PetriP("P" + (2 * j + 1), numChannel));
+            d_P.add(new PetriP("P" + (2 * j + 2), 0));
+            d_T.add(new PetriT("T"+(j), timeMean));
+            d_T.get(j).setDistribution("exp", d_T.get(j).getTimeServ());
+            d_T.get(j).setParamDeviation(0.0);
+            d_In.add(new ArcIn(d_P.get(2 * j), d_T.get(j), 1));
+            d_In.add(new ArcIn(d_P.get(2 * j + 1), d_T.get(j), 1));
+            d_Out.add(new ArcOut(d_T.get(j), d_P.get(2 * j + 1), 1));
+            d_Out.add(new ArcOut(d_T.get(j), d_P.get(2 * j + 2), 1));
+        }
+        PetriNet d_Net = new PetriNet("SMOwithoutQueue", d_P, d_T, d_In, d_Out);
+        PetriP.initNext();
+        PetriT.initNext();
+        ArcIn.initNext();
+        ArcOut.initNext();
+
+        return d_Net;
+    }
+public static PetriNet CreateNetSMOgroup(int numInGroup,int numChannel, double timeMean, String name) throws ExceptionInvalidNetStructure{
+        ArrayList<PetriP> d_P = new ArrayList<PetriP>();
+        ArrayList<PetriT> d_T = new ArrayList<PetriT>();
+        ArrayList<ArcIn> d_In = new ArrayList<ArcIn>();
+        ArrayList<ArcOut> d_Out = new ArrayList<ArcOut>();
+        d_P.add(new PetriP("P0", 0));
+        for (int j = 0; j < numInGroup; j++) {
+            d_P.add(new PetriP("P" + (2 * j + 1), numChannel));
+            d_P.add(new PetriP("P" + (2 * j + 2), 0));
+            d_T.add(new PetriT("T"+(j), timeMean));
+            d_T.get(j).setDistribution("exp", d_T.get(j).getTimeServ());
+            d_T.get(j).setParamDeviation(0.0);
+            d_In.add(new ArcIn(d_P.get(2 * j), d_T.get(j), 1));
+            d_In.add(new ArcIn(d_P.get(2 * j + 1), d_T.get(j), 1));
+            d_Out.add(new ArcOut(d_T.get(j), d_P.get(2 * j + 1), 1));
+            d_Out.add(new ArcOut(d_T.get(j), d_P.get(2 * j + 2), 1));
+        }
+        PetriNet d_Net = new PetriNet(name, d_P, d_T, d_In, d_Out);
+        PetriP.initNext();
+        PetriT.initNext();
+        ArcIn.initNext();
+        ArcOut.initNext();
+
+        return d_Net;
+    }
+    
 /**
      * Creates Petri net that describes the dynamics of system of the mass
      * service (with unlimited queue)

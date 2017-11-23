@@ -7,6 +7,7 @@ package LibTest;
 //import PetriObj.PetriObjModel;
 
 import PetriObj.ExceptionInvalidNetStructure;
+import PetriObj.ExceptionInvalidTimeDelay;
 import PetriObj.PetriObjModel;
 import PetriObj.PetriP;
 import PetriObj.PetriSim;
@@ -23,7 +24,7 @@ import java.util.Arrays;
 public class TestPetriObjModel {  //Результати співпадають з аналітичними обрахунками!!!!
       
    
-    public static void main(String[] args) throws ExceptionInvalidNetStructure {
+    public static void main(String[] args) throws ExceptionInvalidNetStructure, ExceptionInvalidTimeDelay {
          
      
      // цей фрагмент для запуску імітації моделі з заданною мережею Петрі на інтервалі часу timeModeling  
@@ -67,14 +68,14 @@ public class TestPetriObjModel {  //Результати співпадають 
       
      // метод для конструювання моделі масового обслуговування з 4 СМО 
       
-      public static PetriObjModel getModel() throws ExceptionInvalidNetStructure{
+      public static PetriObjModel getModel() throws ExceptionInvalidNetStructure, ExceptionInvalidTimeDelay{
           ArrayList<PetriSim> list = new ArrayList<>();
-          list.add(new PetriSim(libnet.NetLibrary.CreateNetGenerator(2.0)));
-          list.add(new PetriSim(libnet.NetLibrary.CreateNetSMOwithoutQueue(1, 0.6)));
-          list.add(new PetriSim(libnet.NetLibrary.CreateNetSMOwithoutQueue(1, 0.3)));
-          list.add(new PetriSim(libnet.NetLibrary.CreateNetSMOwithoutQueue(1, 0.4)));
-          list.add(new PetriSim(libnet.NetLibrary.CreateNetSMOwithoutQueue(2, 0.1)));
-          list.add(new PetriSim(libnet.NetLibrary.CreateNetFork(0.15, 0.13, 0.3)));
+          list.add(new PetriSim(LibNet.NetLibrary.CreateNetGenerator(2.0)));
+          list.add(new PetriSim(LibNet.NetLibrary.CreateNetSMOwithoutQueue(1, 0.6, "")));
+          list.add(new PetriSim(LibNet.NetLibrary.CreateNetSMOwithoutQueue(1, 0.3, "")));
+          list.add(new PetriSim(LibNet.NetLibrary.CreateNetSMOwithoutQueue(1, 0.4, "")));
+          list.add(new PetriSim(LibNet.NetLibrary.CreateNetSMOwithoutQueue(2, 0.1, "")));
+          list.add(new PetriSim(LibNet.NetLibrary.CreateNetFork(0.15, 0.13, 0.3)));
       //перевірка зв'язків
      //     System.out.println(list.get(0).getNet().getListP()[1].getName() + " == " + list.get(1).getNet().getListP()[0].getName());
      //     System.out.println(list.get(1).getNet().getListP()[2].getName() + " == " + list.get(5).getNet().getListP()[0].getName());
@@ -95,13 +96,13 @@ public class TestPetriObjModel {  //Результати співпадають 
           PetriObjModel model = new PetriObjModel(list);
           return model;
       }
-     public static PetriObjModel getModelForTestParallel(int numObj) throws ExceptionInvalidNetStructure {
+     public static PetriObjModel getModelForTestParallel(int numObj) throws ExceptionInvalidNetStructure, ExceptionInvalidTimeDelay {
         ArrayList<PetriSim> list = new ArrayList<PetriSim>();
         int numSMO = numObj - 1;
-        list.add(new PetriSim(libnet.NetLibrary.CreateNetGenerator(2.0)));
+        list.add(new PetriSim(LibNet.NetLibrary.CreateNetGenerator(2.0)));
         for (int i = 0; i < numSMO; i++) {
            
-            list.add(new PetriSim(libnet.NetLibrary.CreateNetSMOwithoutQueue(1, 1.0))); //   SMO1,SMO2,SMO3...         
+            list.add(new PetriSim(LibNet.NetLibrary.CreateNetSMOwithoutQueue(1, 1.0, ""))); //   SMO1,SMO2,SMO3...         
         }
         list.get(0).getNet().getListP()[1] = list.get(1).getNet().getListP()[0]; //gen = > SMO1
         if (numSMO > 1) {
@@ -114,14 +115,14 @@ public class TestPetriObjModel {  //Результати співпадають 
     }
     
     
-     public static PetriObjModel getModelSMOgroupForTestParallel(int numGroups, int numInGroup) throws ExceptionInvalidNetStructure {
+     public static PetriObjModel getModelSMOgroupForTestParallel(int numGroups, int numInGroup) throws ExceptionInvalidNetStructure, ExceptionInvalidTimeDelay {
         ArrayList<PetriSim> list = new ArrayList<>();
         int numSMO = numGroups - 1;
         
-        list.add(new PetriSim(libnet.NetLibrary.CreateNetGenerator(2.0)));
+        list.add(new PetriSim(LibNet.NetLibrary.CreateNetGenerator(2.0)));
         for (int i = 0; i < numSMO; i++) {
            
-            list.add(new PetriSim(libnet.NetLibrary.CreateNetSMOgroup(numInGroup,1, 1.0,"group_"+i))); //   group1,group2,group3...         
+            list.add(new PetriSim(LibNet.NetLibrary.CreateNetSMOgroup(numInGroup,1, 1.0,"group_"+i))); //   group1,group2,group3...         
         }
         list.get(0).getNet().getListP()[1] = list.get(1).getNet().getListP()[0]; //gen = > group1
         list.get(0).addOutT(list.get(0).getNet().getListT()[0]);
@@ -164,14 +165,14 @@ public class TestPetriObjModel {  //Результати співпадають 
         return model;
     }
      
-    public static PetriObjModel getModel(Object synchron) throws ExceptionInvalidNetStructure{
+    public static PetriObjModel getModel(Object synchron) throws ExceptionInvalidNetStructure, ExceptionInvalidTimeDelay{
           ArrayList<PetriSim> list = new ArrayList<>();
-          list.add(new PetriSim(libnet.NetLibrary.CreateNetGenerator(2.0)));
-          list.add(new PetriSim(libnet.NetLibrary.CreateNetSMOwithoutQueue(1, 0.6," 'SMO1'")));
-          list.add(new PetriSim(libnet.NetLibrary.CreateNetSMOwithoutQueue(1, 0.3," 'SMO2'")));
-          list.add(new PetriSim(libnet.NetLibrary.CreateNetSMOwithoutQueue(1, 0.4," 'SMO3'")));
-          list.add(new PetriSim(libnet.NetLibrary.CreateNetSMOwithoutQueue(2, 0.1," 'SMO4'")));
-          list.add(new PetriSim(libnet.NetLibrary.CreateNetFork(0.15, 0.13, 0.3)));
+          list.add(new PetriSim(LibNet.NetLibrary.CreateNetGenerator(2.0)));
+          list.add(new PetriSim(LibNet.NetLibrary.CreateNetSMOwithoutQueue(1, 0.6," 'SMO1'")));
+          list.add(new PetriSim(LibNet.NetLibrary.CreateNetSMOwithoutQueue(1, 0.3," 'SMO2'")));
+          list.add(new PetriSim(LibNet.NetLibrary.CreateNetSMOwithoutQueue(1, 0.4," 'SMO3'")));
+          list.add(new PetriSim(LibNet.NetLibrary.CreateNetSMOwithoutQueue(2, 0.1," 'SMO4'")));
+          list.add(new PetriSim(LibNet.NetLibrary.CreateNetFork(0.15, 0.13, 0.3)));
      // перевірка зв'язків
        //   System.out.println(list.get(0).getNet().getListP()[1].getName() + " == " + list.get(1).getNet().getListP()[0].getName());
        //  System.out.println(list.get(1).getNet().getListP()[2].getName() + " == " + list.get(5).getNet().getListP()[0].getName());
