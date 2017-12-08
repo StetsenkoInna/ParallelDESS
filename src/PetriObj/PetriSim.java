@@ -102,7 +102,6 @@ public class PetriSim implements Serializable, Runnable {
         priority = 0;
         ListPositionsForStatistica.addAll(Arrays.asList(listP));
         try {
-//           f = new RandomAccessFile(System.getProperty("user.dir") + "/petri-statistics/simTestData" + numObj + ".txt", "rw");
             f = new RandomAccessFile(new File("./statistics/simTestData" + numObj + ".txt"), "rw");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(PetriSim.class.getName()).log(Level.SEVERE, null, ex);
