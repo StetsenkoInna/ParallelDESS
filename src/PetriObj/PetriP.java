@@ -42,20 +42,13 @@ public class PetriP implements Cloneable, Serializable {
      * @param n - the name of place
      */
     public PetriP(String n) {
-        name = n;
-        mark = 0;
-        mean = 0;
-        number = next; //додано 1.10.2012
-        next++;
-        observedMax = 0;
-        observedMin = 0;
+        this(n, 0);
     }
 
     /**
      * Set the counter of places to zero.
      */
     public static void initNext(){ //ініціалізація лічильника нульовим значенням
-    
         next = 0;
     }
 

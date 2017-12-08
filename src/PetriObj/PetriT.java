@@ -42,13 +42,13 @@ public class PetriT implements Cloneable, Serializable {
     private double parametr; //середнє значення часу обслуговування
     private double paramDeviation; //середнє квадратичне відхилення часу обслуговування
     private String distribution;
-    private ArrayList<Double> timeOut = new ArrayList<>();
-    private ArrayList<Integer> inP = new ArrayList<>();
-    private ArrayList<Integer> inPwithInf = new ArrayList<>();
-    private ArrayList<Integer> quantIn = new ArrayList<>();
-    private ArrayList<Integer> quantInwithInf = new ArrayList<>();
-    private ArrayList<Integer> outP = new ArrayList<>();
-    private ArrayList<Integer> quantOut = new ArrayList<>();
+    private final ArrayList<Double> timeOut = new ArrayList<>();
+    private final ArrayList<Integer> inP = new ArrayList<>();
+    private final ArrayList<Integer> inPwithInf = new ArrayList<>();
+    private final ArrayList<Integer> quantIn = new ArrayList<>();
+    private final ArrayList<Integer> quantInwithInf = new ArrayList<>();
+    private final ArrayList<Integer> outP = new ArrayList<>();
+    private final ArrayList<Integer> quantOut = new ArrayList<>();
 
     private int num;  // номер каналу багатоканального переходу, що відповідає найближчий події
     private int number; // номер переходу за списком

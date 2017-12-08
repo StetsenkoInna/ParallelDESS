@@ -8,12 +8,9 @@ package LibTest;
 import static LibTest.TestPetriObjModel.*;
 
 import PetriObj.ExceptionInvalidNetStructure;
-import PetriObj.ExceptionInvalidTimeDelay;
 
 import PetriObj.PetriObjModel;
 import PetriObj.PetriSim;
-import java.io.FileNotFoundException;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +20,9 @@ import java.util.logging.Logger;
  * @author Inna
  */
 public class TestParallel {
-    public static void main(String[] args) throws ExceptionInvalidNetStructure, ExceptionInvalidTimeDelay {
+    public static void main(String[] args) throws ExceptionInvalidNetStructure {
+        
+        long startTime = System.nanoTime();
        
         ArrayList<Thread> threads = new ArrayList<>();
         double time= 100000;
@@ -39,16 +38,15 @@ public class TestParallel {
 //при великій кількості лімітованих подій в буфері  Generator ERROR: Wrong request of rollback з являється частіше і статистика хромає...
         model.setIsProtokol(true);
 
-        model.getListObj().stream().forEach((PetriSim e) -> {
-
+        model.getListObj().forEach((PetriSim e) -> {
             Thread petriObj = new Thread(e);
             threads.add(petriObj);
             petriObj.start();
         });
 
-        threads.stream().forEach((tt) -> {
+        threads.forEach((thread) -> {
             try {
-                tt.join();
+                thread.join();
             } catch (InterruptedException ex) {
                 Logger.getLogger(TestParallel.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -71,6 +69,10 @@ public class TestParallel {
         // System.out.println(e.getName()+" counter = "+e.getCounter());
      //   });
          
+     
+        long stopTime = System.nanoTime();
+        System.out.println("-----------------------------");
+        System.out.println("Total execution time: " + ((stopTime - startTime) / 1_000_000) + " ms.");
      } 
     
     public static void printResultsForAllObj(PetriObjModel model) {

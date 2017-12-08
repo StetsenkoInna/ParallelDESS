@@ -4,6 +4,7 @@ package PetriObj;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -11,6 +12,8 @@ import javax.swing.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -61,15 +64,11 @@ public class PetriSim implements Serializable, Runnable {
     private final Condition cond = lock.newCondition(); //empty buff of external events
     private final Condition condLimitEvents = lock.newCondition(); //
 
-    private ArrayList<Double> timeExternalInput = new ArrayList<>();
+    private List<Double> timeExternalInput = Collections.synchronizedList(new ArrayList<>());
 
     private ArrayList<PetriT> outT = new ArrayList<>(); // переходи, які спричиняють зміну стану спільних позицій, або позицій інших об'єктів
     private ArrayList<PetriT> inT = new ArrayList<>(); // переходи, які сприймають зміну стану спільних позицій, або позицій інших об'єктів
     private static int limitArrayExtInputs = 10;
- 
-    
-    private ArrayList<String> beginWait = new ArrayList<>();
-    private ArrayList<String> endWait = new ArrayList<>();
     
     private int counter=0; // count +1 if reinstant and -1 if rollback
    // private ArrayList<Integer> arrayMark = new ArrayList<>(); 
@@ -103,7 +102,8 @@ public class PetriSim implements Serializable, Runnable {
         priority = 0;
         ListPositionsForStatistica.addAll(Arrays.asList(listP));
         try {
-           f = new RandomAccessFile("G:/simTestData"+numObj+".java", "rw");
+//           f = new RandomAccessFile(System.getProperty("user.dir") + "/petri-statistics/simTestData" + numObj + ".txt", "rw");
+            f = new RandomAccessFile(new File("./statistics/simTestData" + numObj + ".txt"), "rw");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(PetriSim.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -870,48 +870,8 @@ public class PetriSim implements Serializable, Runnable {
     }
 
     public void addTimeExternalInput(double t) {
-        lock.lock();
-        try {
-            getTimeExternalInput().add((Double) t);
-        } finally {
-            lock.unlock();
-        }
+        getTimeExternalInput().add((Double) t);
     }
-    
-  /*  public double getFirstTimeExternalInput(double t) {
-        lock.lock();
-        try {
-            if (previousObj != null) {
-                if (!getTimeExternalInput().isEmpty()) {
-                    return getTimeExternalInput().get(0);
-                } else {
-                    return Double.MAX_VALUE;
-                }
-            } else {
-                return Double.MAX_VALUE;
-            }
-        } finally {
-            lock.unlock();
-        }
-    }
-     public double getLastTimeExternalInput(double t) {
-        lock.lock();
-        try {
-            if (previousObj != null) {
-                if (!getTimeExternalInput().isEmpty()) {
-                    return getTimeExternalInput().get(getTimeExternalInput().size() - 1);
-                } else {
-                    return Double.MAX_VALUE;
-                }
-            } else {
-                return Double.MAX_VALUE;
-            }
-        } finally {
-            lock.unlock();
-        }
-    }
-
-  */ 
     
      /**
      * @return the stop
@@ -954,7 +914,6 @@ public class PetriSim implements Serializable, Runnable {
 
     }
   
-
     public synchronized double getFirstTimeExternalInput() {
         return getTimeExternalInput().get(0);
     }
@@ -1066,12 +1025,7 @@ public class PetriSim implements Serializable, Runnable {
                                 reinstateActOut(previousObj.getOutT().get(0), previousObj.getListP()[previousObj.getListP().length - 1]); //вихід у спільну позицію, припущення: вона задана останньою у списку позицій !!! 
 
                                 //*****************
-                                lock.lock();
-                                try {
-                                    getTimeExternalInput().remove(0); //видалення зі списку запланованих подій
-                                } finally {
-                                    lock.unlock();
-                                }
+                                getTimeExternalInput().remove(0); //видалення зі списку запланованих подій
 
                                 if (getTimeExternalInput().size() <= getLimitArrayExtInputs()) { // надаємо можливість об єкту напрацювати події
                                     previousObj.getLock().lock();
@@ -1202,12 +1156,7 @@ public class PetriSim implements Serializable, Runnable {
                             //***************** 
                             reinstateActOut(previousObj.getOutT().get(0), previousObj.getListP()[previousObj.getListP().length - 1]); //вихід у спільну позицію, припущення: вона задана останньою у списку позицій !!! 
                             //*****************
-                            lock.lock();
-                            try {
-                                getTimeExternalInput().remove(0); //видалення зі списку запланованих подій
-                            } finally {
-                                lock.unlock();
-                            }
+                            getTimeExternalInput().remove(0); //видалення зі списку запланованих подій
 
                             if (getTimeExternalInput().size() <= getLimitArrayExtInputs()) { // надаємо можливість об єкту напрацювати події
                                 previousObj.getLock().lock();
@@ -1416,7 +1365,7 @@ public class PetriSim implements Serializable, Runnable {
     /**
      * @return the timeExternalInput
      */
-    public synchronized ArrayList<Double> getTimeExternalInput() {
+    public synchronized List<Double> getTimeExternalInput() {
         return timeExternalInput;
     }
 
