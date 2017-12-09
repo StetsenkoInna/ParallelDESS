@@ -513,10 +513,10 @@ public class PetriT implements Cloneable, Serializable {
     public void actOut(PetriP[] pp) {
         if (buffer > 0) {
             for (int j = 0; j < outP.size(); j++) {
-                if(!pp[outP.get(j)].isExternal()) //28.07.2016
+                // If external, other Petri-object will do it
+                if(!pp[outP.get(j)].isExternal()) { //28.07.2016
                     pp[outP.get(j)].increaseMark(quantOut.get(j));
-                else
-                    ; // other Petri-object will do it
+                }
             }
             if (num == 0 && (timeOut.size() == 1)) {
                 timeOut.set(0, Double.MAX_VALUE);

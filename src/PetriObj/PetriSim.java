@@ -415,28 +415,19 @@ public class PetriSim implements Serializable, Runnable {
      * 
      */
     public void output() { //added by Inna 15.05.2016, rewroten 17.05.2016-2.06.2016
-      PetriP externalPosition = null;
         if (nextObj != null) {
-            externalPosition = listP[listP.length - 1];
-            externalPosition.setExternal(true);
+            listP[listP.length - 1].setExternal(true);
         }
        
         for (PetriT transition : getListT()) { //Вихід з усіх переходів, що час виходу маркерів == поточний момент час.
 
-            if (transition.getMinTime() == getTimeLocal() && transition.getBuffer() > 0) {
-
-                transition.actOut(getListP()); //Вихід маркерів з переходу, що відповідає найближчому моменту часу
+            while (transition.getMinTime() == getTimeLocal() && transition.getBuffer() > 0) {
+                transition.actOut(getListP()); // Вихід маркерів з переходу, що відповідає найближчому моменту часу
                                                // але тільки у позиції, які не є зовнішніми
-               
+
                 if (nextObj != null && getOutT().contains(transition)) {
-                    // System.out.println(nextObj.getName() + " will receive signal, extInputSize "+nextObj.getTimeExternalInput().size());
-                    //System.out.println(this.getName()+" rollback, mark is "+listP[listP.length - 1].getMark());
-                   
-                    // rollbackActOut(transition, externalPosition); // вихідна спільна позиція об'єкту  - остання в списку listPthis.getLock().lock();
-                 
                     nextObj.addTimeExternalInput((Double) getTimeLocal());
-                    
-                    //******
+
                     getLock().lock();
                     try {
                         while (nextObj.getTimeExternalInput().size() >= getLimitArrayExtInputs()) { //очікувати доки спрацюють інші об єкти
@@ -446,37 +437,6 @@ public class PetriSim implements Serializable, Runnable {
                         Logger.getLogger(PetriSim.class.getName()).log(Level.SEVERE, null, ex);
                     } finally {
                         getLock().unlock();
-                    }
-                }
-
-                // Потрібно відмінити вихід у спільну позицію, він відбудеться у наступному об єкті у відповідний момент часу
-                if (transition.getBuffer() > 0) {
-                    boolean u = true;
-                    while (u == true) { //Багатократний вихід з переходу
-                       
-                        transition.minEvent();
-                        if (transition.getMinTime() == getTimeLocal()) {
-                            transition.actOut(getListP());
-                            if (nextObj != null && getOutT().contains(transition)) {
-                               
-                             //   rollbackActOut(transition, externalPosition); // вихідна спільна позиція об'єкту  - остання в списку listPthis.getLock().lock();
-                                nextObj.addTimeExternalInput((Double) getTimeLocal());
-                                
-                                //******
-                                this.getLock().lock();
-                                try {
-                                    while (nextObj.getTimeExternalInput().size() >= getLimitArrayExtInputs()) { //очікувати доки спрацюють інші об єкти
-                                        this.getCondLimitEvents().await();
-                                    }
-                                } catch (InterruptedException ex) {
-                                    Logger.getLogger(PetriSim.class.getName()).log(Level.SEVERE, null, ex);
-                                } finally {
-                                    lock.unlock();
-                                }
-                            }
-                        } else {
-                            u = false;
-                        }
                     }
                 }
             }
