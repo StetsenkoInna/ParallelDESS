@@ -55,7 +55,7 @@ public class PetriSim implements Serializable, Runnable {
     private ArcOut[] listOut = new ArcOut[numOut];
     private PetriT eventMin;
     private PetriNet net;
-    private ArrayList<PetriP> ListPositionsForStatistica = new ArrayList<PetriP>();
+    private ArrayList<PetriP> ListPositionsForStatistica = new ArrayList<>();
     //..... з таким списком статистика спільних позицій працює правильно...
 
     private PetriSim previousObj;
@@ -221,13 +221,8 @@ public class PetriSim implements Serializable, Runnable {
         ArrayList<PetriT> aT = new ArrayList<>();
 
         for (PetriT transition : getListT()) {
-            if ((transition.condition(getListP()) == true) && (transition.getProbability() != 0)) {
-               // if (getInT().contains(transition) && (getTimeLocal() != getTimeCurr())) {
-              //      System.out.println(transition.getName()+" don't put in activeT "); //не заносити у список активних перехід з вхідною спільною позицію, якщо цей вхід невчасний
-              //  } else {
-
-                    aT.add(transition);
-             //   }
+            if (transition.condition(getListP()) && (transition.getProbability() != 0)) {
+                aT.add(transition);
             }
         }
         if (aT.size() > 1) {
@@ -440,24 +435,17 @@ public class PetriSim implements Serializable, Runnable {
                     // rollbackActOut(transition, externalPosition); // вихідна спільна позиція об'єкту  - остання в списку listPthis.getLock().lock();
                  
                     nextObj.addTimeExternalInput((Double) getTimeLocal());
-
-                    nextObj.getLock().lock();
-                    try {
-
-                        nextObj.getCond().signal(); //"розбудити" об'єкт для опрацювання накопичених подій
-                    } finally {
-                        nextObj.getLock().unlock();
-                    }
+                    
                     //******
-                    this.getLock().lock();
+                    getLock().lock();
                     try {
-                        while (nextObj.getTimeExternalInput().size() > getLimitArrayExtInputs()) { //очікувати доки спрацюють інші об єкти
-                            this.getCondLimitEvents().await();
+                        while (nextObj.getTimeExternalInput().size() >= getLimitArrayExtInputs()) { //очікувати доки спрацюють інші об єкти
+                            getCondLimitEvents().await();
                         }
                     } catch (InterruptedException ex) {
                         Logger.getLogger(PetriSim.class.getName()).log(Level.SEVERE, null, ex);
                     } finally {
-                        lock.unlock();
+                        getLock().unlock();
                     }
                 }
 
@@ -473,17 +461,11 @@ public class PetriSim implements Serializable, Runnable {
                                
                              //   rollbackActOut(transition, externalPosition); // вихідна спільна позиція об'єкту  - остання в списку listPthis.getLock().lock();
                                 nextObj.addTimeExternalInput((Double) getTimeLocal());
-                                nextObj.getLock().lock();
-                                try {
-
-                                    nextObj.getCond().signal(); //"розбудити" об'єкт для опрацювання накопичених подій
-                                } finally {
-                                    nextObj.getLock().unlock();
-                                }
+                                
                                 //******
                                 this.getLock().lock();
                                 try {
-                                    while (nextObj.getTimeExternalInput().size() > getLimitArrayExtInputs()) { //очікувати доки спрацюють інші об єкти
+                                    while (nextObj.getTimeExternalInput().size() >= getLimitArrayExtInputs()) { //очікувати доки спрацюють інші об єкти
                                         this.getCondLimitEvents().await();
                                     }
                                 } catch (InterruptedException ex) {
@@ -829,7 +811,26 @@ public class PetriSim implements Serializable, Runnable {
     }
 
     public void addTimeExternalInput(double t) {
-        getTimeExternalInput().add((Double) t);
+        getLock().lock();
+        try {
+            getTimeExternalInput().add(t);
+            getCond().signal();
+        } finally {
+            getLock().unlock();
+        }
+    }
+    
+    public void removeTimeExternalInput() {
+        getTimeExternalInput().remove(0); //видалення зі списку запланованих подій
+                    
+        if (getTimeExternalInput().size() <= getLimitArrayExtInputs()) { // надаємо можливість об єкту напрацювати події
+            previousObj.getLock().lock();
+            try {
+                previousObj.getCondLimitEvents().signal();
+            } finally {
+                previousObj.getLock().unlock();
+            }
+        }
     }
     
      /**
@@ -848,24 +849,16 @@ public class PetriSim implements Serializable, Runnable {
         
         // rewroten for parallel by Inna 20.05.2016
        
-
         for (PetriT transition : listT) {
-            if (transition.condition(listP)) {
+            if (transition.condition(listP) || transition.getBuffer() > 0) {
                 return false;
             }
-            if (transition.getBuffer() > 0) {
-                return false;
-            }
-
         }
-        if (previousObj != null) {
-            if (!timeExternalInput.isEmpty()) {
-                return false;
-            }
+        if (previousObj != null && !timeExternalInput.isEmpty()) {
+            return false;
         }
         if (nextObj != null) {
-            if (nextObj.getTimeExternalInput().size() > 10) //дати можливість іншим об єктам відпрацювати накопичені події
-            {
+            if (nextObj.getTimeExternalInput().size() >= getLimitArrayExtInputs()) { //дати можливість іншим об єктам відпрацювати накопичені події
                 return false;
             }
         }
@@ -934,14 +927,7 @@ public class PetriSim implements Serializable, Runnable {
                     //спрацює для об'єкта без зовнішніх подій, оскільки для нього limit = getTimeMod()
 
                     if (nextObj != null) {
-                        nextObj.getLock().lock();
-                        nextObj.getTimeExternalInput().add(Double.MAX_VALUE); // тобто не очікуємо подій ззовні
-                        try {
-                            // endWait.add(nextObj.getName()+" 882 "+endWait.size());
-                            nextObj.getCond().signal();
-                        } finally {
-                            nextObj.getLock().unlock();
-                        }
+                        nextObj.addTimeExternalInput(Double.MAX_VALUE); // тобто не очікуємо подій ззовні
                     }
 
                 }
@@ -967,32 +953,14 @@ public class PetriSim implements Serializable, Runnable {
                         // завершуємо дію об'єкта з зовнішніми подіями і передаємо сигнал next - об'єкту
                         if (getFirstTimeExternalInput() > getTimeMod()) {
                             if (nextObj != null) {
-                                nextObj.getLock().lock();
-                                nextObj.getTimeExternalInput().add(Double.MAX_VALUE); // тобто не очікуємо подій ззовні
-                                try {
-                                    // endWait.add(nextObj.getName()+" 914 "+endWait.size());
-                                    nextObj.getCond().signal();
-                                } finally {
-                                    nextObj.getLock().unlock();
-                                }
+                                nextObj.addTimeExternalInput(Double.MAX_VALUE); // тобто не очікуємо подій ззовні
                             }
                         } else { //продовжуємо дію об'єкта з зовнішніми подіями
                             if (getFirstTimeExternalInput() == getTimeLocal()) { //tLocal == limit
                                 //***************** можливо перенести в input?
                                 reinstateActOut(previousObj.getOutT().get(0), previousObj.getListP()[previousObj.getListP().length - 1]); //вихід у спільну позицію, припущення: вона задана останньою у списку позицій !!! 
-
                                 //*****************
-                                getTimeExternalInput().remove(0); //видалення зі списку запланованих подій
-
-                                if (getTimeExternalInput().size() <= getLimitArrayExtInputs()) { // надаємо можливість об єкту напрацювати події
-                                    previousObj.getLock().lock();
-                                    try {
-                                        // endWait.add(previousObj.getName()+" 931 "+endWait.size());
-                                        previousObj.getCondLimitEvents().signal();
-                                    } finally {
-                                        previousObj.getLock().unlock();
-                                    }
-                                }
+                                removeTimeExternalInput(); //видалення зі списку запланованих подій
 
                                 while (getTimeExternalInput().isEmpty()) { //чекаємо на надходження нових подій від previousObj доки він не завершив свою роботу
                                     this.getLock().lock();
@@ -1011,14 +979,7 @@ public class PetriSim implements Serializable, Runnable {
                                     if (getFirstTimeExternalInput() > getTimeMod()) {
 
                                         if (nextObj != null) {
-                                            nextObj.getLock().lock();
-                                            nextObj.getTimeExternalInput().add(Double.MAX_VALUE); // тобто не очікуємо подій ззовні
-                                            try {
-                                                // endWait.add(nextObj.getName()+" 962 "+endWait.size());
-                                                nextObj.getCond().signal();
-                                            } finally {
-                                                nextObj.getLock().unlock();
-                                            }
+                                            nextObj.addTimeExternalInput(Double.MAX_VALUE); // тобто не очікуємо подій ззовні
                                         }
                                     } else {
 
@@ -1047,9 +1008,7 @@ public class PetriSim implements Serializable, Runnable {
         setTimeLocal(t); 
     }
     
-    
-    public void goUntil(double limitTime) {
-        double limit = limitTime;
+    public void goUntil(double limit) {
         while (getTimeLocal() < limit) {  //просування часу в межах відведеного інтервалу
             while (isStop()) { // перевірка передумов запуску input
                 lock.lock();
@@ -1069,68 +1028,40 @@ public class PetriSim implements Serializable, Runnable {
                 moveTimeLocal(getTimeMin());
                 output(); //
                 //    System.out.println(this.getName() + " was done output, new value of timeLocal =  " + getTimeLocal());
-            } else { // усі внутрішні події вичерпані, залишалась зовнішня - на кінці безпечного інтервалу
-                if (limit >= getTimeMod()) {
-                    moveTimeLocal(getTimeMod());
-                    if (nextObj != null) {
-                        nextObj.getLock().lock();
-                        nextObj.getTimeExternalInput().add(Double.MAX_VALUE); // тобто не очікуємо подій ззовні
+            } else if (limit >= getTimeMod()) { // усі внутрішні події вичерпані, залишалась зовнішня - на кінці безпечного інтервалу
+                moveTimeLocal(getTimeMod());
+                if (nextObj != null) {
+                    nextObj.addTimeExternalInput(Double.MAX_VALUE); // тобто не очікуємо подій ззовні
+                }
+            } else if (previousObj != null) {
+                if (getTimeExternalInput().isEmpty() || getLastTimeExternalInput() < Double.MAX_VALUE) {
+                    while (getTimeExternalInput().isEmpty()) {
+                        this.getLock().lock();
                         try {
-                            nextObj.getCond().signal();
+                            //      System.out.println(this.getName() + " is waiting for timeExternalInput ....  " );
+                            this.getCond().await();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(PetriSim.class.getName()).log(Level.SEVERE, null, ex);
                         } finally {
-                            nextObj.getLock().unlock();
+                            this.getLock().unlock();
                         }
-                    }
-
-                } else {
-                    if (previousObj != null) {
-                        if (getTimeExternalInput().isEmpty()||getLastTimeExternalInput() < Double.MAX_VALUE) {
-                            while (getTimeExternalInput().isEmpty()) {
-                                this.getLock().lock();
-                                try {
-                                //      System.out.println(this.getName() + " is waiting for timeExternalInput ....  " );
-                                    this.getCond().await();
-                                } catch (InterruptedException ex) {
-                                    Logger.getLogger(PetriSim.class.getName()).log(Level.SEVERE, null, ex);
-                                } finally {
-                                    this.getLock().unlock();
-                                }
-                            }
-                        }
-                        if (getFirstTimeExternalInput() > getTimeMod()) {
-                            moveTimeLocal(getTimeMod());
-                          
-                            if (nextObj != null) {
-                                nextObj.getLock().lock();
-                                nextObj.getTimeExternalInput().add(Double.MAX_VALUE); // тобто не очікуємо подій ззовні
-                                try {
-                                    nextObj.getCond().signal();
-                                } finally {
-                                    nextObj.getLock().unlock();
-                                }
-                            }
-                        } else {
-                            moveTimeLocal(limit);
-                            //***************** 
-                            reinstateActOut(previousObj.getOutT().get(0), previousObj.getListP()[previousObj.getListP().length - 1]); //вихід у спільну позицію, припущення: вона задана останньою у списку позицій !!! 
-                            //*****************
-                            getTimeExternalInput().remove(0); //видалення зі списку запланованих подій
-
-                            if (getTimeExternalInput().size() <= getLimitArrayExtInputs()) { // надаємо можливість об єкту напрацювати події
-                                previousObj.getLock().lock();
-                                try {
-                                    previousObj.getCondLimitEvents().signal();
-                                } finally {
-                                    previousObj.getLock().unlock();
-                                }
-                            }
-                        }
-
-                    } else {
-                        moveTimeLocal(limit);
                     }
                 }
-
+                if (getFirstTimeExternalInput() > getTimeMod()) {
+                    moveTimeLocal(getTimeMod());
+                    
+                    if (nextObj != null) {
+                        nextObj.addTimeExternalInput(Double.MAX_VALUE); // тобто не очікуємо подій ззовні
+                    }
+                } else {
+                    moveTimeLocal(limit);
+                    //*****************
+                    reinstateActOut(previousObj.getOutT().get(0), previousObj.getListP()[previousObj.getListP().length - 1]); //вихід у спільну позицію, припущення: вона задана останньою у списку позицій !!!
+                    //*****************
+                    removeTimeExternalInput(); //видалення зі списку запланованих подій
+                }
+            } else {
+                moveTimeLocal(limit);
             }
         }
     }
