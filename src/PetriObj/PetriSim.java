@@ -239,16 +239,16 @@ public class PetriSim implements Serializable, Runnable {
     /**
      * Do one event
      */
-    public void step() { //один крок ,використовується для одного об'єкту мережа Петрі
+    public void step() { //один крок, використовується для одного об'єкту мережа Петрі
 
         System.out.println("Next Step  " + "time=" + getTimeCurr());
 
         this.printMark();//друкувати поточне маркування
         ArrayList<PetriT> activeT = this.findActiveT();     //формування списку активних переходів
 
-        if ((activeT.isEmpty() && isBufferEmpty() == true) || getTimeCurr() >= getTimeMod()) { //зупинка імітації за умови, що
-                                                                                            //немає переходів, які запускаються,
-         //   stop = true;                              // і немає маркерів у переходах, або вичерпаний час моделювання
+        // зупинка імітації за умови, що немає переходів, які запускаються, 
+        // і немає маркерів у переходах, або вичерпаний час моделювання
+        if ((activeT.isEmpty() && isBufferEmpty()) || getTimeCurr() >= getTimeMod()) {
             System.out.println("STOP in Net  " + this.getName());
             setTimeMin(getTimeMod());
             for (PetriP p : getListP()) {
@@ -262,10 +262,8 @@ public class PetriSim implements Serializable, Runnable {
             setTimeCurr(getTimeMin());         //просування часу
         } else {
             while (activeT.size() > 0) { //вхід маркерів в переходи доки можливо
-
                 this.doConflikt(activeT).actIn(getListP(), getTimeCurr()); //розв'язання конфліктів
                 activeT = this.findActiveT(); //оновлення списку активних переходів
-
             }
 
             this.eventMin();//знайти найближчу подію та ії час
@@ -281,50 +279,13 @@ public class PetriSim implements Serializable, Runnable {
             setTimeCurr(getTimeMin());         //просування часу
 
             if (getTimeCurr() <= getTimeMod()) {
-
-                //Вихід маркерів
-                eventMin.actOut(getListP());//Вихід маркерів з переходу, що відповідає найближчому моменту часу
-
-                if (eventMin.getBuffer() > 0) {
-                    boolean u = true;
-                    while (u == true) {
-                        eventMin.minEvent();
-                        if (eventMin.getMinTime() == getTimeCurr()) {
-
-                            eventMin.actOut(getListP());
-                            // this.printMark();//друкувати поточне маркування
-                        } else {
-                            u = false;
-                        }
-                    }
-                    //   віддали з буфера переходу eventMin.getName()
-                    // this.printMark();//друкувати поточне маркування
-                }
-                //Додано 6.08.2011!!!
                 for (PetriT transition : getListT()) {//ВАЖЛИВО!!Вихід з усіх переходів, що час виходу маркерів == поточний момент час.
-
-                    if (transition.getBuffer() > 0 && transition.getMinTime() == getTimeCurr()) {
-                        transition.actOut(getListP());//Вихід маркерів з переходу, що відповідає найближчому моменту часу
-
-                        // this.printMark();//друкувати поточне маркування
-                        if (transition.getBuffer() > 0) {
-                            boolean u = true;
-                            while (u == true) {
-                                transition.minEvent();
-                                if (transition.getMinTime() == getTimeCurr()) {
-                                    transition.actOut(getListP());
-                                    // this.printMark();//друкувати поточне маркування
-                                } else {
-                                    u = false;
-                                }
-                            }
-
-                            //   this.printMark();//друкувати поточне маркування
-                        }
+                    while (transition.getBuffer() > 0 && transition.getMinTime() == getTimeCurr()) {
+                        transition.actOut(getListP()); //Вихід маркерів з переходу, що відповідає найближчому моменту часу
+                        transition.minEvent();
                     }
                 }
             }
-
         }
     }
 
@@ -435,27 +396,26 @@ public class PetriSim implements Serializable, Runnable {
      * It does the transitions input markers
      * 
      */
-    public void input() {//вхід маркерів в переходи Петрі-об'єкта added by Inna 15.05.2016
-                            //вхід в уcі переходи, які не використовують спільні позиції
+    public void input() { //вхід маркерів в переходи Петрі-об'єкта added by Inna 15.05.2016
+                          //вхід в уcі переходи, які не використовують спільні позиції
       
-       ArrayList<PetriT> activeT = this.findActiveT();     //формування списку активних переходів
-        if (activeT.isEmpty() && isBufferEmpty()) { //зупинка імітації за умови, що
-          
+        ArrayList<PetriT> activeT = this.findActiveT(); //формування списку активних переходів
+        if (activeT.isEmpty() && isBufferEmpty()) {     //зупинка імітації за умови, що
             setTimeMin(Double.MAX_VALUE);
         } else {
-            while (activeT.size() > 0) { //запуск переходів доки можливо та доки відсутній невчасний вхід в перехід
-                                                // невчасні визанчаються у методі findActiveT( і не заносяться до списку активних
-                PetriT transition =  this.doConflikt(activeT);
+            while (activeT.size() > 0) { // запуск переходів доки можливо та доки відсутній невчасний вхід в перехід
+                                         // невчасні визанчаються у методі findActiveT і не заносяться до списку активних
+                PetriT transition = this.doConflikt(activeT);
                 
                 transition.actIn(getListP(), getTimeLocal()); //розв'язання конфліктів, здійснення входу в перехід
                 activeT = this.findActiveT(); //оновлення списку активних переходів
-                
             }
             this.eventMin();//знайти найближчу подію та ії час
         }
      
     }
-/**
+    
+    /**
      * It does the transitions output markers
      * 
      */
@@ -470,8 +430,8 @@ public class PetriSim implements Serializable, Runnable {
 
             if (transition.getMinTime() == getTimeLocal() && transition.getBuffer() > 0) {
 
-                transition.actOut(getListP());//Вихід маркерів з переходу, що відповідає найближчому моменту часу
-                                                // але тільки у позиції, які не є зовнішніми
+                transition.actOut(getListP()); //Вихід маркерів з переходу, що відповідає найближчому моменту часу
+                                               // але тільки у позиції, які не є зовнішніми
                
                 if (nextObj != null && getOutT().contains(transition)) {
                     // System.out.println(nextObj.getName() + " will receive signal, extInputSize "+nextObj.getTimeExternalInput().size());
@@ -537,7 +497,7 @@ public class PetriSim implements Serializable, Runnable {
                         }
                     }
                 }
-             }
+            }
         }
     }
 
@@ -920,8 +880,6 @@ public class PetriSim implements Serializable, Runnable {
     public synchronized double getLastTimeExternalInput() { // значно покращило роботу алгоритму!
         return getTimeExternalInput().get(getTimeExternalInput().size() - 1);
     }
-
-    
     
     public void goUntilConference(double limitTime) {
         double limit = limitTime;
@@ -1083,6 +1041,7 @@ public class PetriSim implements Serializable, Runnable {
             }
         }
     }
+    
     public void moveTimeLocal(double t){
         doStatistics((t - getTimeLocal()) / t);
         setTimeLocal(t); 
@@ -1179,33 +1138,26 @@ public class PetriSim implements Serializable, Runnable {
     @Override
     public void run() { //step Event in Parallel, by Inna 19.05.16
         
-        while (getTimeLocal() < getTimeMod()  ) { 
+        while (getTimeLocal() < getTimeMod()) { 
             double limitTime = getTimeMod(); //для об єкта без зовнішніх подій
         
             if (previousObj != null) {
                 this.getLock().lock();
                 try {
                     while (getTimeExternalInput().isEmpty()) {
-                      //beginWait.add(this.getName()+" 1008 "+beginWait.size());
-//  System.out.println(this.getName() + " is waiting for timeExternalInput in run() ....  " );
                         this.getCond().await();
                     }
-                   // if (!getTimeExternalInput().isEmpty()) 
-                   // {
-                        limitTime = getTimeExternalInput().get(0); //встановлення інтервалу імітації до моменту події входу маркерів в об'єкт ззовні
-                        if (limitTime > getTimeMod()) {
-                               limitTime=getTimeMod(); //6.07.2016 
-                         }
-                  //  } else
-                     //   System.out.println("---------was empty-------------------"); // цього не має виникати і не виникає 
+                    
+                    limitTime = getFirstTimeExternalInput(); //встановлення інтервалу імітації до моменту події входу маркерів в об'єкт ззовні
+                    if (limitTime > getTimeMod()) {
+                        limitTime = getTimeMod(); //6.07.2016
+                    }
                 } catch (InterruptedException ex) {
                     Logger.getLogger(PetriSim.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
                     this.getLock().unlock();
                 }
-                //System.out.println(this.getName() + " will go again " + limitTime);
-              //  this.printStateExternalEvent();
-            } else { // previousObj=null
+            } else { // previousObj == null
                 limitTime = getTimeMod(); 
             }
 
@@ -1272,7 +1224,7 @@ public class PetriSim implements Serializable, Runnable {
     }
 
     /**
-     * @param timeLocal the timeLocal to set
+     * @param tLocal the timeLocal to set
      */
     public void setTimeLocal(double tLocal) {
        
@@ -1307,7 +1259,6 @@ public class PetriSim implements Serializable, Runnable {
     public void setInT(ArrayList<PetriT> inT) {
         this.inT = inT;
     }
-
     
     public void printState(){
     
@@ -1321,9 +1272,6 @@ public class PetriSim implements Serializable, Runnable {
        
     }
     
-    
-    
-    
     public void printStateExternalEvent(){
        
         if(previousObj!=null){
@@ -1331,7 +1279,7 @@ public class PetriSim implements Serializable, Runnable {
             if(!timeExternalInput.isEmpty())
                 System.out.println(", first external event "+timeExternalInput.get(0)+", tlocal "+timeLocal+", tMin "+timeMin);
         }
-   }
+    }
 
     /**
      * @return the previousObj

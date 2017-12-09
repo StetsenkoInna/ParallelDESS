@@ -26,7 +26,7 @@ import java.util.Random;
  */
 public class PetriObjModel implements Serializable {
     
-    private ArrayList<PetriSim> listObj = new ArrayList<PetriSim>();
+    private ArrayList<PetriSim> listObj = new ArrayList<>();
     private double timeMod = Double.MAX_VALUE - 1;
     private double t;
     private boolean isProtokolPrint = true;
@@ -40,7 +40,6 @@ public class PetriObjModel implements Serializable {
      */
     public PetriObjModel(ArrayList<PetriSim> List) {
         listObj = List;
-       
     }
  
     /**
