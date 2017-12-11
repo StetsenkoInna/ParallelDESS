@@ -29,8 +29,14 @@ import java.util.logging.Logger;
  *  @author Inna V. Stetsenko
  */
 public class PetriSim implements Serializable, Runnable {
-   
-    private static double timeCurr=0;
+     
+    // TODO: move testing logic out of the domain logic
+    private final static String OUT_DIR = "./statistics";
+    static {
+        new File(OUT_DIR).mkdirs();
+    }
+    
+    private static double timeCurr = 0;
    
     private static double timeMod = Double.MAX_VALUE - 1;
 
@@ -102,7 +108,7 @@ public class PetriSim implements Serializable, Runnable {
         priority = 0;
         ListPositionsForStatistica.addAll(Arrays.asList(listP));
         try {
-            f = new RandomAccessFile(new File("./statistics/simTestData" + numObj + ".txt"), "rw");
+            f = new RandomAccessFile(new File(OUT_DIR + "/simTestData" + numObj + ".txt"), "rw");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(PetriSim.class.getName()).log(Level.SEVERE, null, ex);
         }
