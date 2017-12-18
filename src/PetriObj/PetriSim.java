@@ -34,10 +34,9 @@ public class PetriSim implements Serializable, Runnable {
         new File(OUT_DIR).mkdirs();
     }
 
-    private static double timeCurr = 0;
-    private static double timeMod = Double.MAX_VALUE - 1;
-    private double timeLocal = timeCurr; // поточний момент часу об'єкта
-
+    private ModelingTimeState timeState;
+    private double timeLocal;
+    
     private PetriNet net;
     private String name;
     private int numObj; //поточний номер створюваного об"єкта   //додано 6 серпня
@@ -74,14 +73,21 @@ public class PetriSim implements Serializable, Runnable {
     /**
      * Constructs the Petri simulator with given Petri net and time modeling
      *
-     * @param pNet Petri net that describes the dynamics of object
+     * @param net Petri net that describes the dynamics of object
      */
-    public PetriSim(PetriNet pNet) {
-        net = pNet;
+    public PetriSim(PetriNet net) {
+        this(net, new ModelingTimeState());
+    }
+    
+    public PetriSim(PetriNet net, ModelingTimeState timeState) {
+        this.net = net;
+        this.timeState = timeState;
+        
         name = net.getName();
         numObj = next;
         next++;
         timeMin = Double.MAX_VALUE;
+        timeLocal = timeState.getCurrentTime();
 
         listP = net.getListP();
         listT = net.getListT();
@@ -98,32 +104,40 @@ public class PetriSim implements Serializable, Runnable {
         }
     }
     
+    void setTimeState(ModelingTimeState timeState) {
+        this.timeState = timeState;
+    }
+    
     /**
      * @return the timeCurr
      */
-    public static double getTimeCurr() {
-        return timeCurr;
+    public double getTimeCurr() {
+        return timeState.getCurrentTime();
     }
 
     /**
-     * @param aTimeCurr the timeCurr to set
+     * Sets modeling current time
+     * 
+     * @param currentTime time to set
      */
-    public static void setTimeCurr(double aTimeCurr) {
-        timeCurr = aTimeCurr;
+    @Deprecated
+    public void setTimeCurr(double currentTime) {
+        timeState.setCurrentTime(currentTime);
     }
 
     /**
      * @return the timeMod
      */
-    public static double getTimeMod() {
-        return timeMod;
+    public double getTimeMod() {
+        return timeState.getModelingTime();
     }
 
     /**
-     * @param aTimeMod the timeMod to set
+     * @param modelingTime the modeling time to set
      */
-    public static void setTimeMod(double aTimeMod) {
-        timeMod = aTimeMod;
+    @Deprecated
+    public void setTimeMod(double modelingTime) {
+        timeState.setModelingTime(modelingTime);
     }
     
     /**

@@ -33,7 +33,6 @@ public class TestParallel {
         System.out.println("  quantity of objects   "+model.getListObj().size()+
                  ", quantity of positions in one object "+model.getListObj().get(1).getListP().length);
         model.setTimeMod(time);
-        PetriSim.setTimeMod(time);
         PetriSim.setLimitArrayExtInputs(3);
 //при великій кількості лімітованих подій в буфері  Generator ERROR: Wrong request of rollback з являється частіше і статистика хромає...
         model.setIsProtokol(true);
