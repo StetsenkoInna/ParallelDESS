@@ -1142,9 +1142,10 @@ public class PetriNetsFrame extends javax.swing.JFrame {
                                 errorFrame.setVisible(true);
                                 return;
                             } else {
-                                PetriSim.setTimeMod(Double.parseDouble(timeModelingTextField.getText()));
-                                PetriSim petriSim = new PetriSim(petriNetsPanel.getGraphNet().getPetriNet());
-                                PetriSim.setTimeCurr(Double.valueOf(timeStartField.getText()));
+                                double modelingTime = Double.parseDouble(timeModelingTextField.getText());
+                                double currentTime = Double.valueOf(timeStartField.getText());
+                                PetriSim petriSim = new PetriSim(petriNetsPanel.getGraphNet().getPetriNet(),
+                                                                 new ModelingTimeState(currentTime, modelingTime));
                                                               
                                 ArrayList<PetriSim> list = new ArrayList<PetriSim>();
                                 list.add(petriSim);
@@ -1152,11 +1153,11 @@ public class PetriNetsFrame extends javax.swing.JFrame {
                                 m.go(Double.valueOf(timeModelingTextField.getText()), protokolTextArea);
                                 petriNetsPanel.getGraphNet().printStatistics(statisticsTextArea);
                                 //перетворення у потрібний формат ...
-                                Double d = new Double(petriSim.getTimeCurr()); //added by Inna 3.06.2013
-                                Double dd = new Double(100.0*(petriSim.getTimeCurr()-d.intValue()));  //десяткова частина
-                                timeStartField.setText(String.valueOf(
-                                        d.intValue()+"."+dd.intValue()
-                                )); //added by Inna 3.06.2013
+//                                Double d = new Double(petriSim.getTimeCurr()); //added by Inna 3.06.2013
+//                                Double dd = new Double(100.0*(petriSim.getTimeCurr()-d.intValue()));  //десяткова частина
+//                                timeStartField.setText(String.valueOf(
+//                                        d.intValue()+"."+dd.intValue()
+//                                )); //added by Inna 3.06.2013
                                 
                                 petriNetsPanel.repaint(); //додано 19.11.2012, можливо не потрібно?
                             }
@@ -1197,22 +1198,23 @@ public class PetriNetsFrame extends javax.swing.JFrame {
                    errorFrame.setVisible(true);
                    return;
                } else {
-                   PetriSim.setTimeMod(Double.parseDouble(timeModelingTextField.getText()));
-                   PetriSim petriSim = new PetriSim(petriNetsPanel.getGraphNet().getPetriNet() );
-                   PetriSim.setTimeCurr(Double.valueOf(timeStartField.getText()));
-                 
+                    double modelingTime = Double.parseDouble(timeModelingTextField.getText());
+                    double currentTime = Double.valueOf(timeStartField.getText());
+                    PetriSim petriSim = new PetriSim(petriNetsPanel.getGraphNet().getPetriNet(),
+                                                    new ModelingTimeState(currentTime, modelingTime));
+                   
                    // System.out.println("in the begining we have such state of net places:");
                    petriSim.printMark(protokolTextArea);
                    petriSim.step(protokolTextArea);
                    //  System.out.println("at the result we have such state of net places:");
                    petriSim.printMark(protokolTextArea);
                    
-                   Double d = new Double(PetriSim.getTimeCurr()); //added by Inna 3.06.2013
-                   
-                   Double dd = new Double(100.0*(PetriSim.getTimeCurr()-d.intValue()));
-                   timeStartField.setText(String.valueOf(
-                           d.intValue()+"."+dd.intValue() //перетворення у цілий формат, але тоді здається що час дискретний....
-                   )); //added by Inna 3.06.2013
+//                   Double d = new Double(PetriSim.getTimeCurr()); //added by Inna 3.06.2013
+//                   
+//                   Double dd = new Double(100.0*(PetriSim.getTimeCurr()-d.intValue()));
+//                   timeStartField.setText(String.valueOf(
+//                           d.intValue()+"."+dd.intValue() //перетворення у цілий формат, але тоді здається що час дискретний....
+//                   )); //added by Inna 3.06.2013
                    petriNetsPanel.repaint(); //додано 19.11.2012, можливо не потрібно?
                }
            } catch (ExceptionInvalidNetStructure ex) {
